@@ -1,0 +1,15 @@
+{
+  "build": {
+    "declarationFilename": "vorlonBrowserExtension.d.ts",
+    "outputDirectory": "dist"
+  },
+  "core": {
+    "files": [
+     "src/index.html"      
+    ],
+    "typescript": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
+  }
+}
