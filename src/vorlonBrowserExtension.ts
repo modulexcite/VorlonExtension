@@ -18,10 +18,38 @@ module VBE {
             DashboardManager.ListenTabid = tabId;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "./plugincatalog.json";
-            DashboardManager.GetClients();
+            DashboardManager.GetTabs();
+            
+            chrome.tabs.onCreated.addListener((tab) => {
+                DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
+            });
+            
+            chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+                DashboardManager.removeTab({'id': tabId});
+            });
+            
+            chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+                var internalTab = DashboardManager.GetInternalTabObject(tab);
+                //internalTab.name = changeInfo.title;
+                DashboardManager.renameTab(internalTab);
+            });
+            
+             chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
+                DashboardManager.removeTab({'id': removedTabId});
+                chrome.tabs.get(addedTabId, (tab: chrome.tabs.Tab) => {
+                    DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
+                });
+            });
         }
         
-        public static ListenFake(pluginid){
+        public static GetInternalTabObject(tab:chrome.tabs.Tab): any{
+             return {
+                    'id': tab.id,
+                    'name': tab.title
+                };
+        }
+        
+        public static ListenFake(pluginid):void{
            var messagesDiv = DashboardManager.divMapper(pluginid);
            chrome.runtime.onMessage.addListener(
                 function(request, sender, sendResponse) {
@@ -31,51 +59,46 @@ module VBE {
                 });
         }
         
-        public static GetClients(): void {
+        public static GetTabs(): void {
             
-            //Init ClientList Object
+            //Init ClientTab Object
             DashboardManager.TabList = {};
 
-            //Loading client list
-            //TODO : Change with real content 
-            var tabs = [
-                {
-                    'id': 23,
-                    'name': 'Tab 1'
-                },
-                {
-                    'id': 42,
-                    'name': 'MonCul 1'
-                }      
-            ];
+            //Loading tab list
+            var tabs = [];
+            chrome.tabs.query({}, function(tabresult) {
+                for(var i = 0; i < tabresult.length; i++){
+                    tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
+                }
 
-            //Test if the client to display is in the list
-            var contains = false;
-            if (tabs && tabs.length) {
-                for (var j = 0; j < tabs.length; j++) {
-                    if (tabs[j].id === DashboardManager.ListenTabid) {
-                        contains = true;
-                        break;
+                //Test if the client to display is in the list
+                var contains = false;
+                if (tabs && tabs.length) {
+                    for (var j = 0; j < tabs.length; j++) {
+                        if (tabs[j].id === DashboardManager.ListenTabid) {
+                            contains = true;
+                            break;
+                        }
                     }
                 }
-            }
-            
-            //Get the client list placeholder
-            var divClientsListPane = <HTMLDivElement> document.getElementById("clientsListPaneContent");
-            
-            //Create the new empty list
-            var clientlist = document.createElement("ul");
-            clientlist.setAttribute("id", "clientsListPaneContentList")
-            divClientsListPane.appendChild(clientlist);
-                                    
-            for (var i = 0; i < tabs.length; i++) {
-                var tab = tabs[i];
-                DashboardManager.AddTabToList(tab);
-            }
-            
-            if (contains) {
-                DashboardManager.loadPlugins();
-            }
+                
+                //Get the client list placeholder
+                var divClientsListPane = <HTMLDivElement> document.getElementById("clientsListPaneContent");
+                
+                //Create the new empty list
+                var clientlist = document.createElement("ul");
+                clientlist.setAttribute("id", "clientsListPaneContentList")
+                divClientsListPane.appendChild(clientlist);
+                                        
+                for (var i = 0; i < tabs.length; i++) {
+                    var tab = tabs[i];
+                    DashboardManager.AddTabToList(tab);
+                }
+                
+                if (contains) {
+                    DashboardManager.loadPlugins();
+                }
+            });
         }
         
         public static AddTabToList(tab: any){
@@ -94,16 +117,7 @@ module VBE {
             
             var tabs = tablist.children;
             
-            //remove ghosts ones
-            for (var i = 0; i < tabs.length; i++) {
-                var currentTab = <HTMLElement>(tabs[i]);
-                if(DashboardManager.TabList[currentTab.id].name === tab.name){
-                    tablist.removeChild(currentTab);  
-                    i--;
-                }
-            }
-            
-            if(tabs.length === 0 || DashboardManager.TabList[(<HTMLElement>tabs[tabs.length - 1]).id].name < tab.name){
+             if(tabs.length === 0 || DashboardManager.TabList[(<HTMLElement>tabs[tabs.length - 1]).id].name < tab.name){
                 tablist.appendChild(pluginlistelement);
             }
             else if(tabs.length === 1){
@@ -250,23 +264,23 @@ module VBE {
            //Todo
         }
 
-        public static addClient(client: any): void {
-            DashboardManager.AddTabToList(client);
+        public static addTab(tab: any): void {
+            DashboardManager.AddTabToList(tab);
             if(!DashboardManager.DisplayingTab){
                 DashboardManager.loadPlugins();
             }
         }
         
-        public static removeClient(client: any): void {
-            let clientInList = <HTMLLIElement> document.getElementById(client.clientid);
-            if(clientInList){
-                if(client.clientid === DashboardManager.ListenTabid){
+        public static removeTab(tab: any): void {
+            let tabInList = <HTMLLIElement> document.getElementById(tab.id);
+            if(tabInList){
+                if(tab.id === DashboardManager.ListenTabid){
                     DashboardManager.ListenTabid = null;
                     //Start listening server
                 }
                 
-                clientInList.parentElement.removeChild(clientInList);   
-                DashboardManager.removeInClientList(client);
+                tabInList.parentElement.removeChild(tabInList);   
+                DashboardManager.removeInTabList(tab);
                         
                 if (DashboardManager.TabCount() === 0) {
                     DashboardManager.ResetDashboard(false);
@@ -275,9 +289,17 @@ module VBE {
             }
         }
         
-        public static removeInClientList(client: any): void{
-            if(DashboardManager.TabList[client.clientid] != null){
-                delete DashboardManager.TabList[client.clientid];
+        public static renameTab(tab): void {
+            let tabInList = <HTMLLIElement> document.getElementById(tab.id);
+            
+            if(tabInList){
+                (<HTMLLIElement>tabInList.firstChild).innerText = " " + (tab.name) + " - " + tab.id;
+            }
+        }
+        
+        public static removeInTabList(tab: any): void{
+            if(DashboardManager.TabList[tab.id] != null){
+                delete DashboardManager.TabList[tab.id];
             }
         }
    }

@@ -10,7 +10,30 @@ var VBE;
             DashboardManager.ListenTabid = tabId;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "./plugincatalog.json";
-            DashboardManager.GetClients();
+            DashboardManager.GetTabs();
+            chrome.tabs.onCreated.addListener((tab) => {
+                DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
+            });
+            chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+                DashboardManager.removeTab({ 'id': tabId });
+            });
+            chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+                var internalTab = DashboardManager.GetInternalTabObject(tab);
+                //internalTab.name = changeInfo.title;
+                DashboardManager.renameTab(internalTab);
+            });
+            chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
+                DashboardManager.removeTab({ 'id': removedTabId });
+                chrome.tabs.get(addedTabId, (tab) => {
+                    DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
+                });
+            });
+        }
+        static GetInternalTabObject(tab) {
+            return {
+                'id': tab.id,
+                'name': tab.title
+            };
         }
         static ListenFake(pluginid) {
             var messagesDiv = DashboardManager.divMapper(pluginid);
@@ -20,44 +43,39 @@ var VBE;
                     "from the extension");
             });
         }
-        static GetClients() {
-            //Init ClientList Object
+        static GetTabs() {
+            //Init ClientTab Object
             DashboardManager.TabList = {};
-            //Loading client list
-            //TODO : Change with real content 
-            var tabs = [
-                {
-                    'id': 23,
-                    'name': 'Tab 1'
-                },
-                {
-                    'id': 42,
-                    'name': 'MonCul 1'
+            //Loading tab list
+            var tabs = [];
+            chrome.tabs.query({}, function (tabresult) {
+                for (var i = 0; i < tabresult.length; i++) {
+                    tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
                 }
-            ];
-            //Test if the client to display is in the list
-            var contains = false;
-            if (tabs && tabs.length) {
-                for (var j = 0; j < tabs.length; j++) {
-                    if (tabs[j].id === DashboardManager.ListenTabid) {
-                        contains = true;
-                        break;
+                //Test if the client to display is in the list
+                var contains = false;
+                if (tabs && tabs.length) {
+                    for (var j = 0; j < tabs.length; j++) {
+                        if (tabs[j].id === DashboardManager.ListenTabid) {
+                            contains = true;
+                            break;
+                        }
                     }
                 }
-            }
-            //Get the client list placeholder
-            var divClientsListPane = document.getElementById("clientsListPaneContent");
-            //Create the new empty list
-            var clientlist = document.createElement("ul");
-            clientlist.setAttribute("id", "clientsListPaneContentList");
-            divClientsListPane.appendChild(clientlist);
-            for (var i = 0; i < tabs.length; i++) {
-                var tab = tabs[i];
-                DashboardManager.AddTabToList(tab);
-            }
-            if (contains) {
-                DashboardManager.loadPlugins();
-            }
+                //Get the client list placeholder
+                var divClientsListPane = document.getElementById("clientsListPaneContent");
+                //Create the new empty list
+                var clientlist = document.createElement("ul");
+                clientlist.setAttribute("id", "clientsListPaneContentList");
+                divClientsListPane.appendChild(clientlist);
+                for (var i = 0; i < tabs.length; i++) {
+                    var tab = tabs[i];
+                    DashboardManager.AddTabToList(tab);
+                }
+                if (contains) {
+                    DashboardManager.loadPlugins();
+                }
+            });
         }
         static AddTabToList(tab) {
             var tablist = document.getElementById("clientsListPaneContentList");
@@ -71,14 +89,6 @@ var VBE;
                 pluginlistelement.classList.add('active');
             }
             var tabs = tablist.children;
-            //remove ghosts ones
-            for (var i = 0; i < tabs.length; i++) {
-                var currentTab = (tabs[i]);
-                if (DashboardManager.TabList[currentTab.id].name === tab.name) {
-                    tablist.removeChild(currentTab);
-                    i--;
-                }
-            }
             if (tabs.length === 0 || DashboardManager.TabList[tabs[tabs.length - 1].id].name < tab.name) {
                 tablist.appendChild(pluginlistelement);
             }
@@ -198,29 +208,35 @@ var VBE;
         static ReloadClient() {
             //Todo
         }
-        static addClient(client) {
-            DashboardManager.AddTabToList(client);
+        static addTab(tab) {
+            DashboardManager.AddTabToList(tab);
             if (!DashboardManager.DisplayingTab) {
                 DashboardManager.loadPlugins();
             }
         }
-        static removeClient(client) {
-            let clientInList = document.getElementById(client.clientid);
-            if (clientInList) {
-                if (client.clientid === DashboardManager.ListenTabid) {
+        static removeTab(tab) {
+            let tabInList = document.getElementById(tab.id);
+            if (tabInList) {
+                if (tab.id === DashboardManager.ListenTabid) {
                     DashboardManager.ListenTabid = null;
                 }
-                clientInList.parentElement.removeChild(clientInList);
-                DashboardManager.removeInClientList(client);
+                tabInList.parentElement.removeChild(tabInList);
+                DashboardManager.removeInTabList(tab);
                 if (DashboardManager.TabCount() === 0) {
                     DashboardManager.ResetDashboard(false);
                     DashboardManager.DisplayingTab = false;
                 }
             }
         }
-        static removeInClientList(client) {
-            if (DashboardManager.TabList[client.clientid] != null) {
-                delete DashboardManager.TabList[client.clientid];
+        static renameTab(tab) {
+            let tabInList = document.getElementById(tab.id);
+            if (tabInList) {
+                tabInList.firstChild.innerText = " " + (tab.name) + " - " + tab.id;
+            }
+        }
+        static removeInTabList(tab) {
+            if (DashboardManager.TabList[tab.id] != null) {
+                delete DashboardManager.TabList[tab.id];
             }
         }
     }

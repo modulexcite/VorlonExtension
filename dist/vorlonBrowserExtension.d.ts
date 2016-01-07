@@ -13,8 +13,9 @@ declare module VBE {
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
+        static GetInternalTabObject(tab: chrome.tabs.Tab): any;
         static ListenFake(pluginid: any): void;
-        static GetClients(): void;
+        static GetTabs(): void;
         static AddTabToList(tab: any): void;
         static TabCount(): number;
         static UpdateTabInfo(): void;
@@ -23,9 +24,10 @@ declare module VBE {
         identify(): void;
         static ResetDashboard(reload: boolean): void;
         static ReloadClient(): void;
-        static addClient(client: any): void;
-        static removeClient(client: any): void;
-        static removeInClientList(client: any): void;
+        static addTab(tab: any): void;
+        static removeTab(tab: any): void;
+        static renameTab(tab: any): void;
+        static removeInTabList(tab: any): void;
     }
     class Tools {
         static QueryString(): {};
