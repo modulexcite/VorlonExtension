@@ -9,7 +9,7 @@ var VBE;
             //Client ID
             DashboardManager.ListenTabid = tabId;
             DashboardManager.TabList = {};
-            DashboardManager.CatalogUrl = "./plugincatalog.json";
+            DashboardManager.CatalogUrl = "./pluginscatalog.json";
             DashboardManager.GetTabs();
             chrome.tabs.onCreated.addListener((tab) => {
                 DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
@@ -148,18 +148,8 @@ var VBE;
                             throw new Error("The catalog JSON is not well-formed");
                         }
                         var pluginLoaded = 0;
-                        var pluginstoload = 0;
-                        //Cleaning unwanted plugins
-                        for (var i = 0; i < catalog.plugins.length; i++) {
-                            if (catalog.plugins[i].enabled) {
-                                pluginstoload++;
-                            }
-                        }
                         for (var i = 0; i < catalog.plugins.length; i++) {
                             var plugin = catalog.plugins[i];
-                            if (!plugin.enabled) {
-                                continue;
-                            }
                             var existingLocation = document.querySelector('[data-plugin=' + plugin.id + ']');
                             if (!existingLocation) {
                                 var pluginmaindiv = document.createElement('div');
