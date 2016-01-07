@@ -1,9 +1,6 @@
 {
     "plugins": [
-        { "id": "MODERNIZR", "name": "Modernizr", "panel": "bottom", "foldername": "modernizrReport", "enabled": true },
-        { "id": "WEBSTANDARDS", "name": "Best practices", "panel": "top", "foldername": "webstandards", "enabled": true },
-        { "id": "NGINSPECTOR", "name": "Ng. Inspector", "panel": "top", "foldername": "ngInspector", "enabled": false },
-        { "id": "UNITTEST", "name": "Unit Test", "panel": "top", "foldername": "unitTestRunner", "enabled": false },
-        { "id": "BABYLONINSPECTOR", "name": "Babylon Inspector", "panel": "top", "foldername": "babylonInspector", "enabled": false }
+        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport" },
+        { "id": "WEBSTANDARDS", "name": "Best practices", "foldername": "webstandards" }
     ]
 }
