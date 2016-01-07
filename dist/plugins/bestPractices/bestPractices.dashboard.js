@@ -2,8 +2,8 @@ var VBE;
 (function (VBE) {
     var BestPractices;
     (function (BestPractices) {
-        class Plugin {
+        class DashboardPlugin {
         }
-        BestPractices.Plugin = Plugin;
+        BestPractices.DashboardPlugin = DashboardPlugin;
     })(BestPractices = VBE.BestPractices || (VBE.BestPractices = {}));
 })(VBE || (VBE = {}));

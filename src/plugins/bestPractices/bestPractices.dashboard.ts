@@ -1,5 +1,5 @@
 module VBE.BestPractices {
-   export class Plugin {
+   export class DashboardPlugin {
        
    }
 }
