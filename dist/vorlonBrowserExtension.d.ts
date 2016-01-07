@@ -3,7 +3,6 @@ declare var tabid: number;
 declare var vorlonDashboard: VBE.DashboardManager;
 
 
-
 declare module VBE {
     class DashboardManager {
         static CatalogUrl: string;

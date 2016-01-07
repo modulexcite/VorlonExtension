@@ -1,6 +1,0 @@
-{
-    "plugins": [
-        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport" },
-        { "id": "WEBSTANDARDS", "name": "Best practices", "foldername": "webstandards" }
-    ]
-}

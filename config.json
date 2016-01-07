@@ -1,12 +1,13 @@
 {
   "build": {
     "declarationFilename": "vorlonBrowserExtension.d.ts",
+    "runtimeFilename": "vorlonBrowserExtension.runtime.js",
     "outputDirectory": "dist"
   },
   "core": {
     "files": [
      "src/manifest.json",
-     "src/plugincatalog.json",
+     "src/pluginscatalog.json",
      "src/**/*.html",
      "src/**/*.png",
      "src/**/*.eot",

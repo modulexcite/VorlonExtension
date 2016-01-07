@@ -11,6 +11,7 @@ var runSequence = require('run-sequence');
 var replace = require("gulp-replace");
 
 var config = require("./config.json");
+var catalog = require("./src/pluginscatalog.json");
 
 /*
 Compiles all typescript files and creating a declaration file.
@@ -32,7 +33,21 @@ gulp.task('typescript-compile', function() {
     ]);
 });
 
-gulp.task("default", ['typescript-compile'], function () {
+gulp.task("runtime", ['typescript-compile'], function () {
+    var pluginsFiles = [];
+    
+    for (var index = 0; index < catalog.plugins.length; index++) {
+        var pluginFile = "/dist/plugins/" + catalog.plugins[index].foldername + "/" + catalog.plugins[index].foldername + ".js";
+        
+        pluginsFiles.push(pluginFile);
+    } 
+    
+    gulp.src(pluginsFiles)
+    .pipe(concat(config.build.runtimeFilename))        
+    .pipe(gulp.dest(config.build.outputDirectory));
+});
+
+gulp.task("default", ['runtime'], function () {
         gulp.src(config.core.files)
         .pipe(gulp.dest(config.build.outputDirectory));
 });
