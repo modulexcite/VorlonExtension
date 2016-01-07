@@ -5,11 +5,9 @@
   },
   "core": {
     "files": [
-     "src/index.html",
-     "src/vorlonjsPopup.html",
      "src/manifest.json",
-     "src/images/vorlonicon19.png",
-     "src/images/vorlonicon38.png"      
+     "src/**/*.png",
+     "src/**/*.html"
     ],
     "typescript": [
       "src/**/*.ts"
