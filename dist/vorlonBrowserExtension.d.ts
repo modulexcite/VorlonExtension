@@ -1,5 +1,10 @@
+declare var dashboard: VBE.Dashboard;
+
+
+
 declare module VBE {
     class Dashboard {
+        constructor();
     }
 }
 
