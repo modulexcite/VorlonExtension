@@ -4,6 +4,10 @@
   "name": "Vorlon Browser Extension",
   "description": "This extension helps loading the Vorlon.js plug-ins inside MS Edge or Chrome",
   "version": "1.0",
+  
+  "icons": { "16": "images/vorlonicon16.png",
+           "48": "images/vorlonicon48.png",
+          "128": "images/vorlonicon128.png" },
 
   "browser_action": {
       "default_icon": {                    

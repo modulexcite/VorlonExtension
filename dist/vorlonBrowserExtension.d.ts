@@ -1,16 +1,19 @@
-declare var dashboard: any;
+declare var qs: any;
+declare var tabid: number;
+declare var vorlonDashboard: VBE.DashboardManager;
 
 
 
 declare module VBE {
     class DashboardManager {
         static CatalogUrl: string;
-        static ListenTabid: string;
+        static ListenTabid: number;
         static DisplayingTab: boolean;
         static ListenTabDisplayid: string;
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
+        static ListenFake(pluginid: any): void;
         static GetClients(): void;
         static AddTabToList(tab: any): void;
         static TabCount(): number;
@@ -18,11 +21,18 @@ declare module VBE {
         static loadPlugins(): void;
         static divMapper(pluginId: string): HTMLDivElement;
         identify(): void;
-        static ResetDashboard(reload?: boolean): void;
+        static ResetDashboard(reload: boolean): void;
         static ReloadClient(): void;
         static addClient(client: any): void;
         static removeClient(client: any): void;
         static removeInClientList(client: any): void;
+    }
+    class Tools {
+        static QueryString(): {};
+        static RemoveEmpties(arr: string[]): number;
+        static AddClass(e: HTMLElement, name: string): HTMLElement;
+        static RemoveClass(e: HTMLElement, name: string): HTMLElement;
+        static ToggleClass(e: HTMLElement, name: string, callback?: (hasClass: boolean) => void): void;
     }
 }
 
