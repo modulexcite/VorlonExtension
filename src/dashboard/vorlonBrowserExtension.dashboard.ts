@@ -17,7 +17,7 @@ module VBE {
             //Client ID
             DashboardManager.ListenTabid = tabId;
             DashboardManager.TabList = {};
-            DashboardManager.CatalogUrl = "./pluginscatalog.json";
+            DashboardManager.CatalogUrl = "../pluginscatalog.json";
             DashboardManager.GetTabs();
             
             chrome.tabs.onCreated.addListener((tab) => {
