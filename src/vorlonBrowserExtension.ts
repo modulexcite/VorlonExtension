@@ -201,7 +201,7 @@ module VBE {
                             pluginscript.onload = (oError) => {
                                 pluginLoaded++;
                                 if (pluginLoaded >= pluginstoload) {
-                                    DashboardManager.StartListeningServer(DashboardManager.ListenTabid);
+                                    //Start listening server
                                     coreLoaded = true;
                                     this.PluginsLoaded = true;
                                 }
@@ -248,7 +248,7 @@ module VBE {
             if(clientInList){
                 if(client.clientid === DashboardManager.ListenTabid){
                     DashboardManager.ListenTabid = "";
-                    DashboardManager.StartListeningServer();
+                    //Start listening server
                 }
                 
                 clientInList.parentElement.removeChild(clientInList);   
