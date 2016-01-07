@@ -1,0 +1,60 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Vorlon.js</title>
+    <script>var vorlonBaseURL = ".";</script>
+    <link rel="stylesheet" href="./stylesheets/jquery-ui.css">
+    <link rel="stylesheet" href="./stylesheets/contextMenu.css">
+    <link rel="stylesheet" href="./stylesheets/jquery.switchButton.css">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300|Roboto:400,300" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./images/favicon.png">
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <link rel="stylesheet" href="./fonts/fontawesome/css/font-awesome.min.css">
+  </head>
+  <body>
+    <div class="dashboard cf">
+      <section class="sidebar">
+        <header class="sidebar-header">
+          <h1 class="logo">Vorlon.js</h1>
+          <div class="session-info">
+            <p>Tab id: <span data-hook="tab-id">none</span></p>
+          </div>
+        </header>
+        <div id="clientsListPane" class="client-pane">
+          <a id="identify" onclick="vorlonDashboard.identify()" class="btn btn-primary">Identify a tab</a>
+          <h2>Tab List</h2>
+          <div id="clientsListPaneContent" class="client-list"></div><a onclick="VORLON.DashboardManager.ResetDashboard()" class="btn btn-secondary btn-small btn-reset">Reset Dashboard</a><a onclick="VORLON.DashboardManager.ReloadClient()" id="test" class="btn btn-secondary1 btn-small btn-reset">Reload Tab</a>
+        </div>
+      </section>
+      <section class="dashboard-plugins-container">
+        <section class="dashboard-plugins">
+          <section id="pluginsPaneTop" class="panel-top">
+            <header id="pluginsListPaneTop" class="tab-bar cf"></header>
+          </section>
+        </section>
+        <section class="dashboard-plugins-overlay">
+          <div class="message"><img src="./images/VorlonLogo_Smooth.svg" class="logo">
+            <h2>Vorlon.js Browser Extension</h2>
+            <h3>To get started, select a tab on the left pane.</h3>
+          </div>
+        </section>
+      </section>
+    </div>
+    <script src="./javascripts/jquery-2.1.1.min.js"></script>
+    <script src="./vorlon/vorlon-noplugin.max.js"></script>
+    <script src="./vorlonBrowserExtension.js"></script>
+    <script>var vorlonDashboard = new VORLON.DashboardManager("undefined", "undefined");</script>
+    <script src="./javascripts/jquery.splitter-0.14.0.js"></script>
+    <script src="./javascripts/dashboard.js"></script>
+    <script src="./javascripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="./javascripts/contextMenu.js" type="text/javascript"></script>
+    <script src="./javascripts/jquery.switchButton.js" type="text/javascript"></script>
+  </body>
+</html>

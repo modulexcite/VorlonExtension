@@ -1,4 +1,5 @@
 module VBE {
+<<<<<<< HEAD
    declare var $: any;
     
    export class DashboardManager {
@@ -266,5 +267,17 @@ module VBE {
                 delete DashboardManager.TabList[client.clientid];
             }
         }
+// =======
+//    export class Dashboard {
+//        constructor() {
+//            var messagesDiv = document.getElementById("messages");
+//            chrome.runtime.onMessage.addListener(
+//                 function(request, sender, sendResponse) {
+//                     messagesDiv.innerText += messagesDiv.innerText + (sender.tab ?
+//                                 "from a content script:" + sender.tab.url :
+//                                 "from the extension");
+//                 });
+//        }
+// >>>>>>> 387abc5d50c631ee6fa9d433d5a95d994b9fd3e2
    }
 }

@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "Vorlon Browser Extension",
+  "description": "This extension helps loading the Vorlon.js plug-ins inside MS Edge or Chrome",
+  "version": "1.0",
+
+  "browser_action": {
+      "default_icon": {                    
+            "19": "images/vorlonicon19.png",           
+            "38": "images/vorlonicon38.png"            
+          }
+  },
+  "background": {
+      "scripts": ["vorlonBrowserExtension.browserAction.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["vorlonBrowserExtension.runtime.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ]
+}
