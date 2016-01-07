@@ -37,7 +37,7 @@ gulp.task("runtime", ['typescript-compile'], function () {
     var pluginsFiles = [];
     
     for (var index = 0; index < catalog.plugins.length; index++) {
-        var pluginFile = "dist/plugins/" + catalog.plugins[index].foldername + "/" + catalog.plugins[index].foldername + ".js";
+        var pluginFile = "dist/plugins/" + catalog.plugins[index].foldername + "/" + catalog.plugins[index].foldername + ".client.js";
         pluginsFiles.push(pluginFile);
     } 
     
