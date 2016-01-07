@@ -1,4 +1,5 @@
-﻿module VORLON {
+﻿"use strict"
+module VORLON {
     export enum RuntimeSide {
         Client,
         Dashboard,

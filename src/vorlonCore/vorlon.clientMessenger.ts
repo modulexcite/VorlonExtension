@@ -1,5 +1,5 @@
-﻿module VORLON {
- 
+﻿"use strict"
+module VORLON {
     export interface VorlonMessageMetadata {
         pluginID : string;
         side : RuntimeSide;
@@ -15,7 +15,6 @@
     export class ClientMessenger {
         private _targetTabId: number;
         private _dashboardTabId: number;
-
         public onRealtimeMessageReceived: (message: VorlonMessage) => void;
 
         constructor(side: RuntimeSide, targetTabId?: number) {
@@ -59,31 +58,32 @@
                             } 
                         });
                     break;
-            }
-        }
-
-        public sendRealtimeMessage(pluginID: string, objectToSend: any, side: RuntimeSide, messageType = "message", command?:string): void {
-            var message: VorlonMessage = {
-                metadata: {
-                    pluginID: pluginID,
-                    side: side
-                },
-                data: objectToSend,
-                extensionCommand: "message"
-            };
-
-            if (command) {
-                message.command = command;
+                }
             }
 
-            switch (side) {
-                case RuntimeSide.Client:
-                    chrome.tabs.sendMessage(this._dashboardTabId, JSON.stringify(message));
-                    break;
-                case RuntimeSide.Dashboard:
-                    chrome.tabs.sendMessage(this._targetTabId, JSON.stringify(message));
-                    break;
-            return;
+            public sendRealtimeMessage(pluginID: string, objectToSend: any, side: RuntimeSide, messageType = "message", command?:string): void {
+                var message: VorlonMessage = {
+                    metadata: {
+                        pluginID: pluginID,
+                        side: side
+                    },
+                    data: objectToSend,
+                    extensionCommand: "message"
+                };
+
+                if (command) {
+                    message.command = command;
+                }
+
+                switch (side) {
+                    case RuntimeSide.Client:
+                        chrome.tabs.sendMessage(this._dashboardTabId, JSON.stringify(message));
+                        break;
+                    case RuntimeSide.Dashboard:
+                        chrome.tabs.sendMessage(this._targetTabId, JSON.stringify(message));
+                        break;
+                return;
+            }
         }
     }
 }

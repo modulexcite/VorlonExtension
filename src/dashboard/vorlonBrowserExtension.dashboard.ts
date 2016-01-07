@@ -1,10 +1,10 @@
 "use strict"
-module VBE {
+module VORLON {
    declare var $: any;
     
    export class DashboardManager {
         static CatalogUrl: string;
-        static ListenTabid: number;
+        static TargetTabid: number;
         static DisplayingTab: boolean;
         static ListenTabDisplayid: string;
         static TabList: any;
@@ -15,7 +15,7 @@ module VBE {
             DashboardManager.PluginsLoaded = false;
             DashboardManager.DisplayingTab = false;
             //Client ID
-            DashboardManager.ListenTabid = tabId;
+            DashboardManager.TargetTabid = tabId;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "../pluginscatalog.json";
             DashboardManager.GetTabs();
@@ -26,6 +26,9 @@ module VBE {
             
             chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
                 DashboardManager.removeTab({'id': tabId});
+                if(tabId === DashboardManager.TargetTabid){
+                    DashboardManager.showWaitingLogo();
+                }
             });
             
             chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -49,16 +52,6 @@ module VBE {
                 };
         }
         
-        public static ListenFake(pluginid):void{
-           var messagesDiv = DashboardManager.divMapper(pluginid);
-           chrome.runtime.onMessage.addListener(
-                function(request, sender, sendResponse) {
-                    messagesDiv.innerText += messagesDiv.innerText + (sender.tab ?
-                                "from a content script:" + sender.tab.url :
-                                "from the extension");
-                });
-        }
-        
         public static GetTabs(): void {
             
             //Init ClientTab Object
@@ -75,7 +68,7 @@ module VBE {
                 var contains = false;
                 if (tabs && tabs.length) {
                     for (var j = 0; j < tabs.length; j++) {
-                        if (tabs[j].id === DashboardManager.ListenTabid) {
+                        if (tabs[j].id === DashboardManager.TargetTabid) {
                             contains = true;
                             break;
                         }
@@ -104,14 +97,14 @@ module VBE {
         public static AddTabToList(tab: any){
            var tablist = <HTMLUListElement> document.getElementById("clientsListPaneContentList");
             
-            if (DashboardManager.ListenTabid == null) {
-                DashboardManager.ListenTabid = tab.id;
+            if (DashboardManager.TargetTabid == null) {
+                DashboardManager.TargetTabid = tab.id;
             }
 
             var pluginlistelement = document.createElement("li");
             pluginlistelement.classList.add('client');
             pluginlistelement.id = tab.id;
-            if (tab.id == DashboardManager.ListenTabid) {
+            if (tab.id == DashboardManager.TargetTabid) {
                 pluginlistelement.classList.add('active');
             }
             
@@ -152,15 +145,15 @@ module VBE {
         }
 
         static UpdateTabInfo(): void {
-            if(DashboardManager.TabList[DashboardManager.ListenTabid] != null){
-                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.ListenTabid].displayid;
+            if(DashboardManager.TabList[DashboardManager.TargetTabid] != null){
+                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.TargetTabid].displayid;
             }
             
             document.querySelector('[data-hook~=tab-id]').textContent = DashboardManager.ListenTabDisplayid;
         }
 
         public static loadPlugins(): void {
-            if(DashboardManager.ListenTabid == null){
+            if(DashboardManager.TargetTabid == null){
                 return;
             }
                 
@@ -207,24 +200,21 @@ module VBE {
                                 divPluginsTop.appendChild(pluginmaindiv);
                                 divPluginTopTabs.appendChild(plugintab);
                             }
-                            // var pluginscript = document.createElement("script");
-                            // pluginscript.setAttribute("src",  "/vorlon/plugins/" + plugin.foldername + "/vorlon." + plugin.foldername + ".dashboard.min.js");
+                            var pluginscript = document.createElement("script");
+                            pluginscript.setAttribute("src",  "../plugins/" + plugin.foldername + "/vorlon." + plugin.foldername + ".dashboard.js");
 
-                            // pluginscript.onload = (oError) => {
-                            //     pluginLoaded++;
-                            //     if (pluginLoaded >= pluginstoload) {
+                            pluginscript.onload = (oError) => {
+                                pluginLoaded++;
+                                if (pluginLoaded >= catalog.plugins.length) {
                                     //Start listening server
-                                    DashboardManager.ListenFake(plugin.id);
+                                    VORLON.Core.StartDashboardSide(DashboardManager.TargetTabid, DashboardManager.divMapper);
                                     coreLoaded = true;
                                     this.PluginsLoaded = true;
-                                    var elt = <HTMLElement>document.querySelector('.dashboard-plugins-overlay');
-                                    VBE.Tools.AddClass(elt, 'hidden');
-                                // }
-                            //};
-                            //document.body.appendChild(pluginscript);
+                                    DashboardManager.hideWaitingLogo();
+                                }
+                            };
+                            document.body.appendChild(pluginscript);
                         }
-                        
-                        
                         DashboardManager.UpdateTabInfo();
                     }
                 }
@@ -233,8 +223,18 @@ module VBE {
             xhr.open("GET", chrome.extension.getURL(DashboardManager.CatalogUrl));
             xhr.send();
         }
+        
+        public static hideWaitingLogo(): void{
+            var elt = <HTMLElement>document.querySelector('.dashboard-plugins-overlay');
+            VORLON.Tools.AddClass(elt, 'hidden');
+        }
+        
+        public static showWaitingLogo(): void{
+            var elt = <HTMLElement>document.querySelector('.dashboard-plugins-overlay');
+            VORLON.Tools.RemoveClass(elt, 'hidden');
+        }
        
-        public static divMapper(pluginId: string): HTMLDivElement {
+        public static divMapper(pluginId: number): HTMLDivElement {
             let divId = pluginId + "div";
             return <HTMLDivElement> (document.getElementById(divId) || document.querySelector(`[data-plugin=${pluginId}]`));
         }
@@ -261,8 +261,8 @@ module VBE {
         public static removeTab(tab: any): void {
             let tabInList = <HTMLLIElement> document.getElementById(tab.id);
             if(tabInList){
-                if(tab.id === DashboardManager.ListenTabid){
-                    DashboardManager.ListenTabid = null;
+                if(tab.id === DashboardManager.TargetTabid){
+                    DashboardManager.TargetTabid = null;
                     //Start listening server
                 }
                 
@@ -287,151 +287,6 @@ module VBE {
         public static removeInTabList(tab: any): void{
             if(DashboardManager.TabList[tab.id] != null){
                 delete DashboardManager.TabList[tab.id];
-            }
-        }
-   }
-   
-   export class Tools {
-       public static QueryString  () {
-            // This function is anonymous, is executed immediately and 
-            // the return value is assigned to QueryString!
-            var query_string = {};
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
-                var pair = vars[i].split("=");
-                    // If first entry with this name
-                if (typeof query_string[pair[0]] === "undefined") {
-                query_string[pair[0]] = decodeURIComponent(pair[1]);
-                    // If second entry with this name
-                } else if (typeof query_string[pair[0]] === "string") {
-                var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
-                query_string[pair[0]] = arr;
-                    // If third or later entry with this name
-                } else {
-                query_string[pair[0]].push(decodeURIComponent(pair[1]));
-                }
-            } 
-            return query_string;
-        }      
-       
-       public static RemoveEmpties(arr: string[]): number {
-            var len = arr.length;
-            for (var i = len - 1; i >= 0; i--) {
-                if (!arr[i]) {
-                    arr.splice(i, 1);
-                    len--;
-                }
-            }
-            return len;
-       }
-        
-       public static AddClass(e: HTMLElement, name: string): HTMLElement {
-            if (e.classList) {
-                if (name.indexOf(" ") < 0) {
-                    e.classList.add(name);
-                } else {
-                    var namesToAdd = name.split(" ");
-                    Tools.RemoveEmpties(namesToAdd);
-
-                    for (var i = 0, len = namesToAdd.length; i < len; i++) {
-                        e.classList.add(namesToAdd[i]);
-                    }
-                }
-                return e;
-            } else {
-                var className = e.className;
-                var names = className.split(" ");
-                var l = Tools.RemoveEmpties(names);
-                var toAdd;
-
-                if (name.indexOf(" ") >= 0) {
-                    namesToAdd = name.split(" ");
-                    Tools.RemoveEmpties(namesToAdd);
-                    for (i = 0; i < l; i++) {
-                        var found = namesToAdd.indexOf(names[i]);
-                        if (found >= 0) {
-                            namesToAdd.splice(found, 1);
-                        }
-                    }
-                    if (namesToAdd.length > 0) {
-                        toAdd = namesToAdd.join(" ");
-                    }
-                } else {
-                    var saw = false;
-                    for (i = 0; i < l; i++) {
-                        if (names[i] === name) {
-                            saw = true;
-                            break;
-                        }
-                    }
-                    if (!saw) {
-                        toAdd = name;
-                    }
-
-                }
-                if (toAdd) {
-                    if (l > 0 && names[0].length > 0) {
-                        e.className = className + " " + toAdd;
-                    } else {
-                        e.className = toAdd;
-                    }
-                }
-                return e;
-            }
-        }
-
-        public static RemoveClass(e: HTMLElement, name: string): HTMLElement {
-            if (e.classList) {
-                if (e.classList.length === 0) {
-                    return e;
-                }
-                var namesToRemove = name.split(" ");
-                Tools.RemoveEmpties(namesToRemove);
-
-                for (var i = 0, len = namesToRemove.length; i < len; i++) {
-                    e.classList.remove(namesToRemove[i]);
-                }
-                return e;
-            } else {
-                var original = e.className;
-
-                if (name.indexOf(" ") >= 0) {
-                    namesToRemove = name.split(" ");
-                    Tools.RemoveEmpties(namesToRemove);
-                } else {
-                    if (original.indexOf(name) < 0) {
-                        return e;
-                    }
-                    namesToRemove = [name];
-                }
-                var removed;
-                var names = original.split(" ");
-                var namesLen = Tools.RemoveEmpties(names);
-
-                for (i = namesLen - 1; i >= 0; i--) {
-                    if (namesToRemove.indexOf(names[i]) >= 0) {
-                        names.splice(i, 1);
-                        removed = true;
-                    }
-                }
-
-                if (removed) {
-                    e.className = names.join(" ");
-                }
-                return e;
-            }
-        }
-
-        public static ToggleClass(e: HTMLElement, name: string, callback? : (hasClass:boolean) => void) {
-            if (e.className.match(name)) {
-                Tools.RemoveClass(e, name);
-                if (callback)
-                    callback(false);
-            } else {
-                Tools.AddClass(e, name);
-                if (callback)
-                    callback(true);
             }
         }
    }

@@ -1,4 +1,5 @@
-﻿module VORLON {
+﻿"use strict"
+module VORLON {
     declare var vorlonBaseURL: string;
 
     export class ClientPlugin extends BasePlugin  {
@@ -20,7 +21,6 @@
         
         public sendCommandToDashboard(command: string, data: any = null) {
             if (Core.Messenger) {
-                this.trace(this.getID() + ' send command to dashboard ' + command);
                 Core.Messenger.sendRealtimeMessage(this.getID(), data, RuntimeSide.Client, "message", command);
             }
         }

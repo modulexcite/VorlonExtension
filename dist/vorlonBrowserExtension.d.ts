@@ -2,25 +2,26 @@ declare var dashboardTabId: number;
 
 declare var qs: any;
 declare var tabid: number;
-declare var vorlonDashboard: VBE.DashboardManager;
+declare var vorlonDashboard: VORLON.DashboardManager;
 
-declare module VBE {
+declare module VORLON {
     class DashboardManager {
         static CatalogUrl: string;
-        static ListenTabid: number;
+        static TargetTabid: number;
         static DisplayingTab: boolean;
         static ListenTabDisplayid: string;
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
         static GetInternalTabObject(tab: chrome.tabs.Tab): any;
-        static ListenFake(pluginid: any): void;
         static GetTabs(): void;
         static AddTabToList(tab: any): void;
         static TabCount(): number;
         static UpdateTabInfo(): void;
         static loadPlugins(): void;
-        static divMapper(pluginId: string): HTMLDivElement;
+        static hideWaitingLogo(): void;
+        static showWaitingLogo(): void;
+        static divMapper(pluginId: number): HTMLDivElement;
         identify(): void;
         static ResetDashboard(reload: boolean): void;
         static ReloadClient(): void;
@@ -29,13 +30,67 @@ declare module VBE {
         static renameTab(tab: any): void;
         static removeInTabList(tab: any): void;
     }
-    class Tools {
-        static QueryString(): {};
-        static RemoveEmpties(arr: string[]): number;
-        static AddClass(e: HTMLElement, name: string): HTMLElement;
-        static RemoveClass(e: HTMLElement, name: string): HTMLElement;
-        static ToggleClass(e: HTMLElement, name: string, callback?: (hasClass: boolean) => void): void;
+}
+
+interface Thenable<R> {
+    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
+}
+declare class Promise<R> implements Thenable<R> {
+    /**
+     * If you call resolve in the body of the callback passed to the constructor,
+     * your promise is fulfilled with result object passed to resolve.
+     * If you call reject your promise is rejected with the object passed to reject.
+     * For consistency and debugging (eg stack traces), obj should be an instanceof Error.
+     * Any errors thrown in the constructor callback will be implicitly passed to reject().
+     */
+    constructor(callback: (resolve: (value?: R | Thenable<R>) => void, reject: (error?: any) => void) => void);
+    /**
+     * onFulfilled is called when/if "promise" resolves. onRejected is called when/if "promise" rejects.
+     * Both are optional, if either/both are omitted the next onFulfilled/onRejected in the chain is called.
+     * Both callbacks have a single parameter , the fulfillment value or rejection reason.
+     * "then" returns a new promise equivalent to the value you return from onFulfilled/onRejected after being passed through Promise.resolve.
+     * If an error is thrown in the callback, the returned promise rejects with that error.
+     *
+     * @param onFulfilled called when/if "promise" resolves
+     * @param onRejected called when/if "promise" rejects
+     */
+    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Promise<U>;
+    then<U>(onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => void): Promise<U>;
+    /**
+     * Sugar for promise.then(undefined, onRejected)
+     *
+     * @param onRejected called when/if "promise" rejects
+     */
+    catch<U>(onRejected?: (error: any) => U | Thenable<U>): Promise<U>;
+}
+declare module Promise {
+    /**
+     * Make a new promise from the thenable.
+     * A thenable is promise-like in as far as it has a "then" method.
+     */
+    function resolve<R>(value?: R | Thenable<R>): Promise<R>;
+    /**
+     * Make a promise that rejects to obj. For consistency and debugging (eg stack traces), obj should be an instanceof Error
+     */
+    function reject(error: any): Promise<any>;
+    /**
+     * Make a promise that fulfills when every item in the array fulfills, and rejects if (and when) any item rejects.
+     * the array passed to all can be a mixture of promise-like objects and other objects.
+     * The fulfillment value is an array (in order) of fulfillment values. The rejection value is the first rejection value.
+     */
+    function all<R>(promises: (R | Thenable<R>)[]): Promise<R[]>;
+    /**
+     * Make a Promise that fulfills when any item fulfills, and rejects if any item rejects.
+     */
+    function race<R>(promises: (R | Thenable<R>)[]): Promise<R>;
+}
+declare module 'es6-promise' {
+    var foo: typeof Promise;
+    module rsvp {
+        var Promise: typeof foo;
     }
+    export = rsvp;
 }
 
 declare module VORLON {
@@ -43,15 +98,10 @@ declare module VORLON {
         name: string;
         _ready: boolean;
         protected _id: string;
-        protected _debug: boolean;
         _type: PluginType;
-        trace: (msg) => void;
-        protected traceLog: (msg: any) => void;
-        protected traceNoop: (msg: any) => void;
         loadingDirectory: string;
         constructor(name: string);
         Type: PluginType;
-        debug: boolean;
         getID(): string;
         isReady(): boolean;
     }
@@ -61,39 +111,19 @@ declare module VORLON {
     interface VorlonMessageMetadata {
         pluginID: string;
         side: RuntimeSide;
-        sessionId: string;
-        clientId: string;
-        listenClientId: string;
     }
     interface VorlonMessage {
         metadata: VorlonMessageMetadata;
         command?: string;
         data?: any;
+        extensionCommand?: string;
     }
     class ClientMessenger {
-        private _socket;
-        private _isConnected;
-        private _sessionId;
-        private _clientId;
-        private _listenClientId;
-        private _serverUrl;
+        private _targetTabId;
+        private _dashboardTabId;
         onRealtimeMessageReceived: (message: VorlonMessage) => void;
-        onHeloReceived: (id: string) => void;
-        onIdentifyReceived: (id: string) => void;
-        onRemoveClient: (id: any) => void;
-        onAddClient: (id: any) => void;
-        onStopListenReceived: () => void;
-        onRefreshClients: () => void;
-        onReload: (id: string) => void;
-        onError: (err: Error) => void;
-        isConnected: boolean;
-        clientId: string;
-        socketId: string;
-        constructor(side: RuntimeSide, serverUrl: string, sessionId: string, clientId: string, listenClientId: string);
-        stopListening(): void;
+        constructor(side: RuntimeSide, targetTabId?: number);
         sendRealtimeMessage(pluginID: string, objectToSend: any, side: RuntimeSide, messageType?: string, command?: string): void;
-        sendMonitoringMessage(pluginID: string, message: string): void;
-        getMonitoringMessage(pluginID: string, onMonitoringMessage: (messages: string[]) => any, from?: string, to?: string): any;
     }
 }
 
@@ -115,31 +145,16 @@ declare module VORLON {
         _clientPlugins: ClientPlugin[];
         _dashboardPlugins: DashboardPlugin[];
         _messenger: ClientMessenger;
-        _sessionID: string;
-        _listenClientId: string;
+        _tabId: number;
         _side: RuntimeSide;
-        _errorNotifier: any;
-        _messageNotifier: any;
-        _socketIOWaitCount: number;
-        debug: boolean;
-        _RetryTimeout: number;
         Messenger: ClientMessenger;
         ClientPlugins: Array<ClientPlugin>;
         DashboardPlugins: Array<DashboardPlugin>;
         RegisterClientPlugin(plugin: ClientPlugin): void;
         RegisterDashboardPlugin(plugin: DashboardPlugin): void;
-        StopListening(): void;
-        StartClientSide(serverUrl?: string, sessionId?: string, listenClientId?: string): void;
-        sendHelo(): void;
-        startClientDirtyCheck(): void;
-        StartDashboardSide(serverUrl?: string, sessionId?: string, listenClientId?: string, divMapper?: (string) => HTMLDivElement): void;
-        private _OnStopListenReceived();
-        private _OnIdentifyReceived(message);
-        private ShowError(message, timeout?);
-        private _OnError(err);
+        StartClientSide(): void;
+        StartDashboardSide(tabid: number, divMapper: (number) => HTMLDivElement): void;
         private _OnIdentificationReceived(id);
-        private _OnReloadClient(id);
-        private _RetrySendingRealtimeMessage(plugin, message);
         private _Dispatch(message);
         private _DispatchPluginMessage(plugin, message);
         private _DispatchFromClientPluginMessage(plugin, message);
@@ -180,6 +195,7 @@ declare module VORLON {
 
 declare module VORLON {
     class Tools {
+        static QueryString(): {};
         static QuerySelectorById(root: HTMLElement, id: string): HTMLElement;
         static SetImmediate(func: () => void): void;
         static setLocalStorageValue(key: string, data: string): void;
@@ -230,5 +246,26 @@ declare module VBE.BestPractices {
 
 declare module VBE.BestPractices {
     class DashboardPlugin {
+    }
+}
+
+declare module VORLON {
+    class SampleClient extends ClientPlugin {
+        constructor();
+        getID(): string;
+        refresh(): void;
+        startClientSide(): void;
+        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    class SampleDashboard extends DashboardPlugin {
+        constructor();
+        getID(): string;
+        private _inputField;
+        private _outputDiv;
+        startDashboardSide(div?: HTMLDivElement): void;
+        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
 }

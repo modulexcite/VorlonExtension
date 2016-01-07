@@ -1,21 +1,46 @@
+"use strict";
 var VORLON;
 (function (VORLON) {
-    class Tools {
-        static QuerySelectorById(root, id) {
+    var Tools = (function () {
+        function Tools() {
+        }
+        Tools.QueryString = function () {
+            // This function is anonymous, is executed immediately and 
+            // the return value is assigned to QueryString!
+            var query_string = {};
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                // If first entry with this name
+                if (typeof query_string[pair[0]] === "undefined") {
+                    query_string[pair[0]] = decodeURIComponent(pair[1]);
+                }
+                else if (typeof query_string[pair[0]] === "string") {
+                    var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
+                    query_string[pair[0]] = arr;
+                }
+                else {
+                    query_string[pair[0]].push(decodeURIComponent(pair[1]));
+                }
+            }
+            return query_string;
+        };
+        Tools.QuerySelectorById = function (root, id) {
             if (root.querySelector) {
                 return root.querySelector("#" + id);
             }
             return document.getElementById(id);
-        }
-        static SetImmediate(func) {
+        };
+        Tools.SetImmediate = function (func) {
             if (window.setImmediate) {
                 setImmediate(func);
             }
             else {
                 setTimeout(func, 0);
             }
-        }
-        static setLocalStorageValue(key, data) {
+        };
+        Tools.setLocalStorageValue = function (key, data) {
             if (localStorage) {
                 try {
                     localStorage.setItem(key, data);
@@ -23,8 +48,8 @@ var VORLON;
                 catch (e) {
                 }
             }
-        }
-        static getLocalStorageValue(key) {
+        };
+        Tools.getLocalStorageValue = function (key) {
             if (localStorage) {
                 try {
                     return localStorage.getItem(key);
@@ -34,16 +59,20 @@ var VORLON;
                     return "";
                 }
             }
-        }
-        static Hook(rootObject, functionToHook, hookingFunction) {
+        };
+        Tools.Hook = function (rootObject, functionToHook, hookingFunction) {
             var previousFunction = rootObject[functionToHook];
-            rootObject[functionToHook] = (...optionalParams) => {
+            rootObject[functionToHook] = function () {
+                var optionalParams = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    optionalParams[_i - 0] = arguments[_i];
+                }
                 hookingFunction(optionalParams);
                 previousFunction.apply(rootObject, optionalParams);
             };
             return previousFunction;
-        }
-        static HookProperty(rootObject, propertyToHook, callback) {
+        };
+        Tools.HookProperty = function (rootObject, propertyToHook, callback) {
             var initialValue = rootObject[propertyToHook];
             Object.defineProperty(rootObject, propertyToHook, {
                 get: function () {
@@ -53,8 +82,8 @@ var VORLON;
                     return initialValue;
                 }
             });
-        }
-        static getCallStack(skipped) {
+        };
+        Tools.getCallStack = function (skipped) {
             skipped = skipped || 0;
             try {
                 //Throw an error to generate a stack trace
@@ -94,8 +123,8 @@ var VORLON;
                 }
                 return res;
             }
-        }
-        static CreateCookie(name, value, days) {
+        };
+        Tools.CreateCookie = function (name, value, days) {
             var expires;
             if (days) {
                 var date = new Date();
@@ -106,8 +135,8 @@ var VORLON;
                 expires = "";
             }
             document.cookie = name + "=" + value + expires + "; path=/";
-        }
-        static ReadCookie(name) {
+        };
+        Tools.ReadCookie = function (name) {
             var nameEQ = name + "=";
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
@@ -120,15 +149,15 @@ var VORLON;
                 }
             }
             return "";
-        }
+        };
         // from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/2117523#answer-2117523
-        static CreateGUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        Tools.CreateGUID = function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
-        }
-        static RemoveEmpties(arr) {
+        };
+        Tools.RemoveEmpties = function (arr) {
             var len = arr.length;
             for (var i = len - 1; i >= 0; i--) {
                 if (!arr[i]) {
@@ -137,8 +166,8 @@ var VORLON;
                 }
             }
             return len;
-        }
-        static AddClass(e, name) {
+        };
+        Tools.AddClass = function (e, name) {
             if (e.classList) {
                 if (name.indexOf(" ") < 0) {
                     e.classList.add(name);
@@ -192,8 +221,8 @@ var VORLON;
                 }
                 return e;
             }
-        }
-        static RemoveClass(e, name) {
+        };
+        Tools.RemoveClass = function (e, name) {
             if (e.classList) {
                 if (e.classList.length === 0) {
                     return e;
@@ -231,8 +260,8 @@ var VORLON;
                 }
                 return e;
             }
-        }
-        static ToggleClass(e, name, callback) {
+        };
+        Tools.ToggleClass = function (e, name, callback) {
             if (e.className.match(name)) {
                 Tools.RemoveClass(e, name);
                 if (callback)
@@ -243,14 +272,15 @@ var VORLON;
                 if (callback)
                     callback(true);
             }
-        }
-        static htmlToString(text) {
+        };
+        Tools.htmlToString = function (text) {
             return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-    }
+        };
+        return Tools;
+    })();
     VORLON.Tools = Tools;
-    class FluentDOM {
-        constructor(nodeType, className, parentElt, parent) {
+    var FluentDOM = (function () {
+        function FluentDOM(nodeType, className, parentElt, parent) {
             this.childs = [];
             if (nodeType) {
                 this.element = document.createElement(nodeType);
@@ -264,86 +294,87 @@ var VORLON;
                 }
             }
         }
-        static forElement(element) {
+        FluentDOM.forElement = function (element) {
             var res = new FluentDOM(null);
             res.element = element;
             return res;
-        }
-        addClass(classname) {
+        };
+        FluentDOM.prototype.addClass = function (classname) {
             this.element.classList.add(classname);
             return this;
-        }
-        toggleClass(classname) {
+        };
+        FluentDOM.prototype.toggleClass = function (classname) {
             this.element.classList.toggle(classname);
             return this;
-        }
-        className(classname) {
+        };
+        FluentDOM.prototype.className = function (classname) {
             this.element.className = classname;
             return this;
-        }
-        opacity(opacity) {
+        };
+        FluentDOM.prototype.opacity = function (opacity) {
             this.element.style.opacity = opacity;
             return this;
-        }
-        display(display) {
+        };
+        FluentDOM.prototype.display = function (display) {
             this.element.style.display = display;
             return this;
-        }
-        hide() {
+        };
+        FluentDOM.prototype.hide = function () {
             this.element.style.display = 'none';
             return this;
-        }
-        visibility(visibility) {
+        };
+        FluentDOM.prototype.visibility = function (visibility) {
             this.element.style.visibility = visibility;
             return this;
-        }
-        text(text) {
+        };
+        FluentDOM.prototype.text = function (text) {
             this.element.textContent = text;
             return this;
-        }
-        html(text) {
+        };
+        FluentDOM.prototype.html = function (text) {
             this.element.innerHTML = text;
             return this;
-        }
-        attr(name, val) {
+        };
+        FluentDOM.prototype.attr = function (name, val) {
             this.element.setAttribute(name, val);
             return this;
-        }
-        editable(editable) {
+        };
+        FluentDOM.prototype.editable = function (editable) {
             this.element.contentEditable = editable ? "true" : "false";
             return this;
-        }
-        style(name, val) {
+        };
+        FluentDOM.prototype.style = function (name, val) {
             this.element.style[name] = val;
             return this;
-        }
-        appendTo(elt) {
+        };
+        FluentDOM.prototype.appendTo = function (elt) {
             elt.appendChild(this.element);
             return this;
-        }
-        append(nodeType, className, callback) {
+        };
+        FluentDOM.prototype.append = function (nodeType, className, callback) {
             var child = new FluentDOM(nodeType, className, this.element, this);
             if (callback) {
                 callback(child);
             }
             return this;
-        }
-        createChild(nodeType, className) {
+        };
+        FluentDOM.prototype.createChild = function (nodeType, className) {
             var child = new FluentDOM(nodeType, className, this.element, this);
             return child;
-        }
-        click(callback) {
+        };
+        FluentDOM.prototype.click = function (callback) {
             this.element.addEventListener('click', callback);
             return this;
-        }
-        blur(callback) {
+        };
+        FluentDOM.prototype.blur = function (callback) {
             this.element.addEventListener('blur', callback);
             return this;
-        }
-        keydown(callback) {
+        };
+        FluentDOM.prototype.keydown = function (callback) {
             this.element.addEventListener('keydown', callback);
             return this;
-        }
-    }
+        };
+        return FluentDOM;
+    })();
     VORLON.FluentDOM = FluentDOM;
 })(VORLON || (VORLON = {}));

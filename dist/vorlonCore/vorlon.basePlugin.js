@@ -1,37 +1,28 @@
+"use strict";
 var VORLON;
 (function (VORLON) {
-    class BasePlugin {
-        constructor(name) {
+    var BasePlugin = (function () {
+        function BasePlugin(name) {
             this.name = name;
             this._ready = true;
             this._id = "";
             this._type = VORLON.PluginType.OneOne;
-            this.traceLog = (msg) => { console.log(msg); };
-            this.traceNoop = (msg) => { };
-            this.loadingDirectory = "vorlon/plugins";
-            this.debug = VORLON.Core.debug;
+            this.loadingDirectory = "../plugins";
         }
-        get Type() {
-            return this._type;
-        }
-        get debug() {
-            return this._debug;
-        }
-        set debug(val) {
-            this._debug = val;
-            if (val) {
-                this.trace = this.traceLog;
-            }
-            else {
-                this.trace = this.traceNoop;
-            }
-        }
-        getID() {
+        Object.defineProperty(BasePlugin.prototype, "Type", {
+            get: function () {
+                return this._type;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        BasePlugin.prototype.getID = function () {
             return this._id;
-        }
-        isReady() {
+        };
+        BasePlugin.prototype.isReady = function () {
             return this._ready;
-        }
-    }
+        };
+        return BasePlugin;
+    })();
     VORLON.BasePlugin = BasePlugin;
 })(VORLON || (VORLON = {}));

@@ -1,3 +1,4 @@
+"use strict";
 var VORLON;
 (function (VORLON) {
     (function (RuntimeSide) {

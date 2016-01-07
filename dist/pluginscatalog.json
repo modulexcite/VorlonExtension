@@ -1,5 +1,5 @@
 {
     "plugins": [
-        { "id": "WEBSTANDARDS", "name": "Best practices", "foldername": "bestPractices" }
+        { "id": "SAMPLE", "name": "Sample On peut pas creuser", "foldername": "sample" }
     ]
 }

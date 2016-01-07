@@ -1,49 +1,44 @@
 "use strict";
-var VBE;
-(function (VBE) {
-    class DashboardManager {
-        constructor(tabId) {
+var VORLON;
+(function (VORLON) {
+    var DashboardManager = (function () {
+        function DashboardManager(tabId) {
             //Dashboard session id
             DashboardManager.PluginsLoaded = false;
             DashboardManager.DisplayingTab = false;
             //Client ID
-            DashboardManager.ListenTabid = tabId;
+            DashboardManager.TargetTabid = tabId;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "../pluginscatalog.json";
             DashboardManager.GetTabs();
-            chrome.tabs.onCreated.addListener((tab) => {
+            chrome.tabs.onCreated.addListener(function (tab) {
                 DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
             });
-            chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+            chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
                 DashboardManager.removeTab({ 'id': tabId });
+                if (tabId === DashboardManager.TargetTabid) {
+                    DashboardManager.showWaitingLogo();
+                }
             });
-            chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+            chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 var internalTab = DashboardManager.GetInternalTabObject(tab);
                 //internalTab.name = changeInfo.title;
                 DashboardManager.renameTab(internalTab);
             });
-            chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
+            chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
                 DashboardManager.removeTab({ 'id': removedTabId });
-                chrome.tabs.get(addedTabId, (tab) => {
+                chrome.tabs.get(addedTabId, function (tab) {
                     DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
                 });
             });
         }
-        static GetInternalTabObject(tab) {
+        DashboardManager.GetInternalTabObject = function (tab) {
             return {
                 'id': tab.id,
                 'name': tab.title
             };
-        }
-        static ListenFake(pluginid) {
-            var messagesDiv = DashboardManager.divMapper(pluginid);
-            chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-                messagesDiv.innerText += messagesDiv.innerText + (sender.tab ?
-                    "from a content script:" + sender.tab.url :
-                    "from the extension");
-            });
-        }
-        static GetTabs() {
+        };
+        DashboardManager.GetTabs = function () {
             //Init ClientTab Object
             DashboardManager.TabList = {};
             //Loading tab list
@@ -56,7 +51,7 @@ var VBE;
                 var contains = false;
                 if (tabs && tabs.length) {
                     for (var j = 0; j < tabs.length; j++) {
-                        if (tabs[j].id === DashboardManager.ListenTabid) {
+                        if (tabs[j].id === DashboardManager.TargetTabid) {
                             contains = true;
                             break;
                         }
@@ -76,16 +71,16 @@ var VBE;
                     DashboardManager.loadPlugins();
                 }
             });
-        }
-        static AddTabToList(tab) {
+        };
+        DashboardManager.AddTabToList = function (tab) {
             var tablist = document.getElementById("clientsListPaneContentList");
-            if (DashboardManager.ListenTabid == null) {
-                DashboardManager.ListenTabid = tab.id;
+            if (DashboardManager.TargetTabid == null) {
+                DashboardManager.TargetTabid = tab.id;
             }
             var pluginlistelement = document.createElement("li");
             pluginlistelement.classList.add('client');
             pluginlistelement.id = tab.id;
-            if (tab.id == DashboardManager.ListenTabid) {
+            if (tab.id == DashboardManager.TargetTabid) {
                 pluginlistelement.classList.add('active');
             }
             var tabs = tablist.children;
@@ -115,29 +110,30 @@ var VBE;
             pluginlistelementa.setAttribute("href", "?tabid=" + tab.id);
             pluginlistelement.appendChild(pluginlistelementa);
             DashboardManager.TabList[tab.id] = tab;
-        }
-        static TabCount() {
+        };
+        DashboardManager.TabCount = function () {
             return Object.keys(DashboardManager.TabList).length;
-        }
-        static UpdateTabInfo() {
-            if (DashboardManager.TabList[DashboardManager.ListenTabid] != null) {
-                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.ListenTabid].displayid;
+        };
+        DashboardManager.UpdateTabInfo = function () {
+            if (DashboardManager.TabList[DashboardManager.TargetTabid] != null) {
+                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.TargetTabid].displayid;
             }
             document.querySelector('[data-hook~=tab-id]').textContent = DashboardManager.ListenTabDisplayid;
-        }
-        static loadPlugins() {
-            if (DashboardManager.ListenTabid == null) {
+        };
+        DashboardManager.loadPlugins = function () {
+            var _this = this;
+            if (DashboardManager.TargetTabid == null) {
                 return;
             }
             if (this.PluginsLoaded) {
                 // Start Listening
                 return;
             }
-            let xhr = new XMLHttpRequest();
-            let divPluginsTop = document.getElementById("pluginsPaneTop");
-            let divPluginTopTabs = document.getElementById("pluginsListPaneTop");
-            let coreLoaded = false;
-            xhr.onreadystatechange = () => {
+            var xhr = new XMLHttpRequest();
+            var divPluginsTop = document.getElementById("pluginsPaneTop");
+            var divPluginTopTabs = document.getElementById("pluginsListPaneTop");
+            var coreLoaded = false;
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var catalog;
@@ -166,17 +162,19 @@ var VBE;
                                 divPluginsTop.appendChild(pluginmaindiv);
                                 divPluginTopTabs.appendChild(plugintab);
                             }
-                            // var pluginscript = document.createElement("script");
-                            // pluginscript.setAttribute("src",  "/vorlon/plugins/" + plugin.foldername + "/vorlon." + plugin.foldername + ".dashboard.min.js");
-                            // pluginscript.onload = (oError) => {
-                            //     pluginLoaded++;
-                            //     if (pluginLoaded >= pluginstoload) {
-                            //Start listening server
-                            DashboardManager.ListenFake(plugin.id);
-                            coreLoaded = true;
-                            this.PluginsLoaded = true;
-                            var elt = document.querySelector('.dashboard-plugins-overlay');
-                            VBE.Tools.AddClass(elt, 'hidden');
+                            var pluginscript = document.createElement("script");
+                            pluginscript.setAttribute("src", "../plugins/" + plugin.foldername + "/vorlon." + plugin.foldername + ".dashboard.js");
+                            pluginscript.onload = function (oError) {
+                                pluginLoaded++;
+                                if (pluginLoaded >= catalog.plugins.length) {
+                                    //Start listening server
+                                    VORLON.Core.StartDashboardSide(DashboardManager.TargetTabid, DashboardManager.divMapper);
+                                    coreLoaded = true;
+                                    _this.PluginsLoaded = true;
+                                    DashboardManager.hideWaitingLogo();
+                                }
+                            };
+                            document.body.appendChild(pluginscript);
                         }
                         DashboardManager.UpdateTabInfo();
                     }
@@ -184,31 +182,39 @@ var VBE;
             };
             xhr.open("GET", chrome.extension.getURL(DashboardManager.CatalogUrl));
             xhr.send();
-        }
-        static divMapper(pluginId) {
-            let divId = pluginId + "div";
-            return (document.getElementById(divId) || document.querySelector(`[data-plugin=${pluginId}]`));
-        }
-        identify() {
+        };
+        DashboardManager.hideWaitingLogo = function () {
+            var elt = document.querySelector('.dashboard-plugins-overlay');
+            VORLON.Tools.AddClass(elt, 'hidden');
+        };
+        DashboardManager.showWaitingLogo = function () {
+            var elt = document.querySelector('.dashboard-plugins-overlay');
+            VORLON.Tools.RemoveClass(elt, 'hidden');
+        };
+        DashboardManager.divMapper = function (pluginId) {
+            var divId = pluginId + "div";
+            return (document.getElementById(divId) || document.querySelector("[data-plugin=" + pluginId + "]"));
+        };
+        DashboardManager.prototype.identify = function () {
             //Core.Messenger.sendRealtimeMessage("", { "_sessionid": DashboardManager.SessionId }, VORLON.RuntimeSide.Dashboard, "identify");
-        }
-        static ResetDashboard(reload) {
+        };
+        DashboardManager.ResetDashboard = function (reload) {
             //Todo
-        }
-        static ReloadClient() {
+        };
+        DashboardManager.ReloadClient = function () {
             //Todo
-        }
-        static addTab(tab) {
+        };
+        DashboardManager.addTab = function (tab) {
             DashboardManager.AddTabToList(tab);
             if (!DashboardManager.DisplayingTab) {
                 DashboardManager.loadPlugins();
             }
-        }
-        static removeTab(tab) {
-            let tabInList = document.getElementById(tab.id);
+        };
+        DashboardManager.removeTab = function (tab) {
+            var tabInList = document.getElementById(tab.id);
             if (tabInList) {
-                if (tab.id === DashboardManager.ListenTabid) {
-                    DashboardManager.ListenTabid = null;
+                if (tab.id === DashboardManager.TargetTabid) {
+                    DashboardManager.TargetTabid = null;
                 }
                 tabInList.parentElement.removeChild(tabInList);
                 DashboardManager.removeInTabList(tab);
@@ -217,159 +223,19 @@ var VBE;
                     DashboardManager.DisplayingTab = false;
                 }
             }
-        }
-        static renameTab(tab) {
-            let tabInList = document.getElementById(tab.id);
+        };
+        DashboardManager.renameTab = function (tab) {
+            var tabInList = document.getElementById(tab.id);
             if (tabInList) {
                 tabInList.firstChild.innerText = " " + (tab.name) + " - " + tab.id;
             }
-        }
-        static removeInTabList(tab) {
+        };
+        DashboardManager.removeInTabList = function (tab) {
             if (DashboardManager.TabList[tab.id] != null) {
                 delete DashboardManager.TabList[tab.id];
             }
-        }
-    }
-    VBE.DashboardManager = DashboardManager;
-    class Tools {
-        static QueryString() {
-            // This function is anonymous, is executed immediately and 
-            // the return value is assigned to QueryString!
-            var query_string = {};
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                // If first entry with this name
-                if (typeof query_string[pair[0]] === "undefined") {
-                    query_string[pair[0]] = decodeURIComponent(pair[1]);
-                }
-                else if (typeof query_string[pair[0]] === "string") {
-                    var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
-                    query_string[pair[0]] = arr;
-                }
-                else {
-                    query_string[pair[0]].push(decodeURIComponent(pair[1]));
-                }
-            }
-            return query_string;
-        }
-        static RemoveEmpties(arr) {
-            var len = arr.length;
-            for (var i = len - 1; i >= 0; i--) {
-                if (!arr[i]) {
-                    arr.splice(i, 1);
-                    len--;
-                }
-            }
-            return len;
-        }
-        static AddClass(e, name) {
-            if (e.classList) {
-                if (name.indexOf(" ") < 0) {
-                    e.classList.add(name);
-                }
-                else {
-                    var namesToAdd = name.split(" ");
-                    Tools.RemoveEmpties(namesToAdd);
-                    for (var i = 0, len = namesToAdd.length; i < len; i++) {
-                        e.classList.add(namesToAdd[i]);
-                    }
-                }
-                return e;
-            }
-            else {
-                var className = e.className;
-                var names = className.split(" ");
-                var l = Tools.RemoveEmpties(names);
-                var toAdd;
-                if (name.indexOf(" ") >= 0) {
-                    namesToAdd = name.split(" ");
-                    Tools.RemoveEmpties(namesToAdd);
-                    for (i = 0; i < l; i++) {
-                        var found = namesToAdd.indexOf(names[i]);
-                        if (found >= 0) {
-                            namesToAdd.splice(found, 1);
-                        }
-                    }
-                    if (namesToAdd.length > 0) {
-                        toAdd = namesToAdd.join(" ");
-                    }
-                }
-                else {
-                    var saw = false;
-                    for (i = 0; i < l; i++) {
-                        if (names[i] === name) {
-                            saw = true;
-                            break;
-                        }
-                    }
-                    if (!saw) {
-                        toAdd = name;
-                    }
-                }
-                if (toAdd) {
-                    if (l > 0 && names[0].length > 0) {
-                        e.className = className + " " + toAdd;
-                    }
-                    else {
-                        e.className = toAdd;
-                    }
-                }
-                return e;
-            }
-        }
-        static RemoveClass(e, name) {
-            if (e.classList) {
-                if (e.classList.length === 0) {
-                    return e;
-                }
-                var namesToRemove = name.split(" ");
-                Tools.RemoveEmpties(namesToRemove);
-                for (var i = 0, len = namesToRemove.length; i < len; i++) {
-                    e.classList.remove(namesToRemove[i]);
-                }
-                return e;
-            }
-            else {
-                var original = e.className;
-                if (name.indexOf(" ") >= 0) {
-                    namesToRemove = name.split(" ");
-                    Tools.RemoveEmpties(namesToRemove);
-                }
-                else {
-                    if (original.indexOf(name) < 0) {
-                        return e;
-                    }
-                    namesToRemove = [name];
-                }
-                var removed;
-                var names = original.split(" ");
-                var namesLen = Tools.RemoveEmpties(names);
-                for (i = namesLen - 1; i >= 0; i--) {
-                    if (namesToRemove.indexOf(names[i]) >= 0) {
-                        names.splice(i, 1);
-                        removed = true;
-                    }
-                }
-                if (removed) {
-                    e.className = names.join(" ");
-                }
-                return e;
-            }
-        }
-        static ToggleClass(e, name, callback) {
-            if (e.className.match(name)) {
-                Tools.RemoveClass(e, name);
-                if (callback)
-                    callback(false);
-            }
-            else {
-                Tools.AddClass(e, name);
-                if (callback)
-                    callback(true);
-            }
-        }
-    }
-    VBE.Tools = Tools;
-})(VBE || (VBE = {}));
+        };
+        return DashboardManager;
+    })();
+    VORLON.DashboardManager = DashboardManager;
+})(VORLON || (VORLON = {}));

@@ -1,38 +1,45 @@
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var VORLON;
 (function (VORLON) {
-    class DashboardPlugin extends VORLON.BasePlugin {
-        constructor(name, htmlFragmentUrl, cssStyleSheetUrl) {
-            super(name);
+    var DashboardPlugin = (function (_super) {
+        __extends(DashboardPlugin, _super);
+        function DashboardPlugin(name, htmlFragmentUrl, cssStyleSheetUrl) {
+            _super.call(this, name);
             this.htmlFragmentUrl = htmlFragmentUrl;
             this.cssStyleSheetUrl = cssStyleSheetUrl;
-            this.debug = VORLON.Core.debug;
         }
-        startDashboardSide(div) { }
-        onRealtimeMessageReceivedFromClientSide(receivedObject) { }
-        sendToClient(data) {
+        DashboardPlugin.prototype.startDashboardSide = function (div) { };
+        DashboardPlugin.prototype.onRealtimeMessageReceivedFromClientSide = function (receivedObject) { };
+        DashboardPlugin.prototype.sendToClient = function (data) {
             if (VORLON.Core.Messenger)
                 VORLON.Core.Messenger.sendRealtimeMessage(this.getID(), data, VORLON.RuntimeSide.Dashboard, "message");
-        }
-        sendCommandToClient(command, data = null) {
+        };
+        DashboardPlugin.prototype.sendCommandToClient = function (command, data) {
+            if (data === void 0) { data = null; }
             if (VORLON.Core.Messenger) {
-                this.trace(this.getID() + ' send command to client ' + command);
                 VORLON.Core.Messenger.sendRealtimeMessage(this.getID(), data, VORLON.RuntimeSide.Dashboard, "message", command);
             }
-        }
-        sendCommandToPluginClient(pluginId, command, data = null) {
+        };
+        DashboardPlugin.prototype.sendCommandToPluginClient = function (pluginId, command, data) {
+            if (data === void 0) { data = null; }
             if (VORLON.Core.Messenger) {
-                this.trace(this.getID() + ' send command to plugin client ' + command);
                 VORLON.Core.Messenger.sendRealtimeMessage(pluginId, data, VORLON.RuntimeSide.Dashboard, "protocol", command);
             }
-        }
-        sendCommandToPluginDashboard(pluginId, command, data = null) {
+        };
+        DashboardPlugin.prototype.sendCommandToPluginDashboard = function (pluginId, command, data) {
+            if (data === void 0) { data = null; }
             if (VORLON.Core.Messenger) {
-                this.trace(this.getID() + ' send command to plugin dashboard ' + command);
                 VORLON.Core.Messenger.sendRealtimeMessage(pluginId, data, VORLON.RuntimeSide.Client, "protocol", command);
             }
-        }
-        _insertHtmlContentAsync(divContainer, callback) {
-            var basedUrl = vorlonBaseURL + "/" + this.loadingDirectory + "/" + this.name + "/";
+        };
+        DashboardPlugin.prototype._insertHtmlContentAsync = function (divContainer, callback) {
+            var _this = this;
+            var basedUrl = this.loadingDirectory + "/" + this.name + "/";
             var alone = false;
             if (!divContainer) {
                 // Not emptyDiv provided, let's plug into the main DOM
@@ -41,16 +48,16 @@ var VORLON;
                 alone = true;
             }
             var request = new XMLHttpRequest();
-            request.open('GET', basedUrl + this.htmlFragmentUrl, true);
-            request.onreadystatechange = (ev) => {
+            request.open('GET', chrome.extension.getURL(basedUrl + this.htmlFragmentUrl), true);
+            request.onreadystatechange = function (ev) {
                 if (request.readyState === 4) {
                     if (request.status === 200) {
-                        divContainer.innerHTML = this._stripContent(request.responseText);
+                        divContainer.innerHTML = _this._stripContent(request.responseText);
                         var headID = document.getElementsByTagName("head")[0];
                         var cssNode = document.createElement('link');
                         cssNode.type = "text/css";
                         cssNode.rel = "stylesheet";
-                        cssNode.href = basedUrl + this.cssStyleSheetUrl;
+                        cssNode.href = basedUrl + _this.cssStyleSheetUrl;
                         cssNode.media = "screen";
                         headID.appendChild(cssNode);
                         var firstDivChild = (divContainer.children[0]);
@@ -60,13 +67,13 @@ var VORLON;
                         callback(firstDivChild);
                     }
                     else {
-                        throw new Error("Error status: " + request.status + " - Unable to load " + basedUrl + this.htmlFragmentUrl);
+                        throw new Error("Error status: " + request.status + " - Unable to load " + basedUrl + _this.htmlFragmentUrl);
                     }
                 }
             };
             request.send(null);
-        }
-        _stripContent(content) {
+        };
+        DashboardPlugin.prototype._stripContent = function (content) {
             // in case of SVG injection
             var xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im;
             // for HTML content
@@ -79,7 +86,8 @@ var VORLON;
                 }
             }
             return content;
-        }
-    }
+        };
+        return DashboardPlugin;
+    })(VORLON.BasePlugin);
     VORLON.DashboardPlugin = DashboardPlugin;
 })(VORLON || (VORLON = {}));

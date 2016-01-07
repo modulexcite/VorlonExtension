@@ -1,3 +1,3 @@
-var qs = VBE.Tools.QueryString();
+var qs = VORLON.Tools.QueryString();
 var tabid = parseInt(qs.tabid);
-var vorlonDashboard = new VBE.DashboardManager(tabid);
+var vorlonDashboard = new VORLON.DashboardManager(tabid);
