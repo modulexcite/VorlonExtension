@@ -33,7 +33,6 @@ gulp.task('typescript-compile', function() {
 });
 
 gulp.task("default", ['typescript-compile'], function () {
-    return 
         gulp.src(config.core.files)
         .pipe(gulp.dest(config.build.outputDirectory));
 });

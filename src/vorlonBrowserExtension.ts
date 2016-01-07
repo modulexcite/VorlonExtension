@@ -1,5 +1,5 @@
 module VBE {
-   export class Dashboard {
+   export class Dashboard { 
        
    }
 }
