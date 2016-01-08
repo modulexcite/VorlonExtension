@@ -122,7 +122,7 @@ var VORLON;
         };
         DashboardManager.loadPlugins = function () {
             var _this = this;
-            if (DashboardManager.TargetTabid == null) {
+            if (DashboardManager.TargetTabid == null && Number.isNaN(DashboardManager.TargetTabid)) {
                 return;
             }
             if (this.PluginsLoaded) {
