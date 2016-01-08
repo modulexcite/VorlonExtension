@@ -56,9 +56,6 @@ declare module VORLON {
         static hideWaitingLogo(): void;
         static showWaitingLogo(): void;
         static divMapper(pluginId: number): HTMLDivElement;
-        identify(): void;
-        static ResetDashboard(reload: boolean): void;
-        static ReloadClient(): void;
         static addTab(tab: any): void;
         static removeTab(tab: any): void;
         static renameTab(tab: any): void;

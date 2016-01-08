@@ -65,38 +65,44 @@ module VORLON {
 
             //Loading tab list
             var tabs = [];
-            browser.tabs.query({}, function(tabresult) {
-                for(var i = 0; i < tabresult.length; i++){
-                    tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
-                }
+            browser.tabs.getCurrent((currentTab) => {
+                browser.tabs.query({}, (tabresult) => {
+                    for(var i = 0; i < tabresult.length; i++){
+                        var tab = DashboardManager.GetInternalTabObject(tabresult[i]);
+                        if (tab.id === currentTab.id) {
+                            continue;
+                        }
+                        tabs.push(tab);
+                    }
 
-                //Test if the client to display is in the list
-                var contains = false;
-                if (tabs && tabs.length) {
-                    for (var j = 0; j < tabs.length; j++) {
-                        if (tabs[j].id === DashboardManager.TargetTabid) {
-                            contains = true;
-                            break;
+                    //Test if the client to display is in the list
+                    var contains = false;
+                    if (tabs && tabs.length) {
+                        for (var j = 0; j < tabs.length; j++) {
+                            if (tabs[j].id === DashboardManager.TargetTabid) {
+                                contains = true;
+                                break;
+                            }
                         }
                     }
-                }
-                
-                //Get the client list placeholder
-                var divClientsListPane = <HTMLDivElement> document.getElementById("clientsListPaneContent");
-                
-                //Create the new empty list
-                var clientlist = document.createElement("ul");
-                clientlist.setAttribute("id", "clientsListPaneContentList")
-                divClientsListPane.appendChild(clientlist);
-                                        
-                for (var i = 0; i < tabs.length; i++) {
-                    var tab = tabs[i];
-                    DashboardManager.AddTabToList(tab);
-                }
-                
-                if (contains) {
-                    DashboardManager.loadPlugins();
-                }
+                    
+                    //Get the client list placeholder
+                    var divClientsListPane = <HTMLDivElement> document.getElementById("clientsListPaneContent");
+                    
+                    //Create the new empty list
+                    var clientlist = document.createElement("ul");
+                    clientlist.setAttribute("id", "clientsListPaneContentList")
+                    divClientsListPane.appendChild(clientlist);
+                                            
+                    for (var i = 0; i < tabs.length; i++) {
+                        var tab = tabs[i];
+                        DashboardManager.AddTabToList(tab);
+                    }
+                    
+                    if (contains) {
+                        DashboardManager.loadPlugins();
+                    }
+                });
             });
         }
         
@@ -139,7 +145,7 @@ module VORLON {
             }
             
             var pluginlistelementa = document.createElement("a");
-            pluginlistelementa.textContent = " " + (tab.name) + " - " + tab.id;
+            pluginlistelementa.textContent = " " + (tab.name);
             pluginlistelementa.setAttribute("href", "?tabid=" + tab.id);
             pluginlistelement.appendChild(pluginlistelementa);
 
@@ -245,18 +251,6 @@ module VORLON {
             return <HTMLDivElement> (document.getElementById(divId) || document.querySelector(`[data-plugin=${pluginId}]`));
         }
 
-        public identify(): void {
-            //Core.Messenger.sendRealtimeMessage("", { "_sessionid": DashboardManager.SessionId }, VORLON.RuntimeSide.Dashboard, "identify");
-        }
-
-        public static ResetDashboard(reload: boolean): void {
-            //Todo
-        }
-
-        public static ReloadClient(): void {
-           //Todo
-        }
-
         public static addTab(tab: any): void {
             DashboardManager.AddTabToList(tab);
             if(!DashboardManager.DisplayingTab){
@@ -276,7 +270,6 @@ module VORLON {
                 DashboardManager.removeInTabList(tab);
                         
                 if (DashboardManager.TabCount() === 0) {
-                    DashboardManager.ResetDashboard(false);
                     DashboardManager.DisplayingTab = false;
                 }
             }
