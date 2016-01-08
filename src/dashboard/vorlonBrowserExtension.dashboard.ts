@@ -153,7 +153,7 @@ module VORLON {
         }
 
         public static loadPlugins(): void {
-            if(DashboardManager.TargetTabid == null){
+            if(DashboardManager.TargetTabid == null && Number.isNaN(DashboardManager.TargetTabid)){
                 return;
             }
                 
