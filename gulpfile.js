@@ -34,7 +34,14 @@ gulp.task('typescript-compile', function() {
 });
 
 gulp.task("runtime", ['typescript-compile'], function () {
-    var pluginsFiles = ["dist/vorlonCore/vorlon.clientPlugin.js"];
+    var pluginsFiles = [
+        "dist/vorlonCore/vorlon.tools.js",
+        "dist/vorlonCore/vorlon.enums.js",
+        "dist/vorlonCore/vorlon.clientMessenger.js",
+        "dist/vorlonCore/vorlon.core.js",
+        "dist/vorlonCore/vorlon.clientPlugin.js",
+        "dist/vorlonCore/vorlon.basePlugin.js"
+    ];
     
     for (var index = 0; index < catalog.plugins.length; index++) {
         var pluginFile = "dist/plugins/" + catalog.plugins[index].foldername + "/vorlon." + catalog.plugins[index].foldername + ".client.js";
