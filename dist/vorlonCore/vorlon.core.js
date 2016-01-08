@@ -54,14 +54,10 @@ var VORLON;
                 var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
             }
-        };
-        _Core.prototype._OnIdentificationReceived = function (id) {
-            if (VORLON.Core._side === VORLON.RuntimeSide.Client) {
-                // Refresh plugins
-                for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
-                    var plugin = VORLON.Core._clientPlugins[index];
-                    plugin.refresh();
-                }
+            // Refresh plugins
+            for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
+                var clientPlugin = VORLON.Core._clientPlugins[index];
+                clientPlugin.refresh();
             }
         };
         _Core.prototype._Dispatch = function (message) {

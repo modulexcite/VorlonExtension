@@ -1,6 +1,8 @@
 {
     "plugins": [
         { "id": "SAMPLE", "name": "Sample", "foldername": "sample" },
-        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport" }
+        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport", "dependencies":[
+            "modernizr.js"
+        ] }
     ]
 }
