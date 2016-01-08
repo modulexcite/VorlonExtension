@@ -34,7 +34,7 @@ gulp.task('typescript-compile', function() {
 });
 
 gulp.task("runtime", ['typescript-compile'], function () {
-    var pluginsFiles = [];
+    var pluginsFiles = ["dist/vorlonCore/vorlon.clientPlugin.js"];
     
     for (var index = 0; index < catalog.plugins.length; index++) {
         var pluginFile = "dist/plugins/" + catalog.plugins[index].foldername + "/vorlon." + catalog.plugins[index].foldername + ".client.js";
