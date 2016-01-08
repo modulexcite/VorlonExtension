@@ -1,4 +1,10 @@
 "use strict"
+window.browser = (function(){
+  return  window.browser      ||
+          window.chrome       ||
+          window.msBrowser;
+})();
+
 module VBE {
    declare var $: any;
     
@@ -20,29 +26,29 @@ module VBE {
             DashboardManager.CatalogUrl = "./plugincatalog.json";
             DashboardManager.GetTabs();
             
-            chrome.tabs.onCreated.addListener((tab) => {
+            browser.tabs.onCreated.addListener((tab) => {
                 DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
             });
             
-            chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+            browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
                 DashboardManager.removeTab({'id': tabId});
             });
             
-            chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+            browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 var internalTab = DashboardManager.GetInternalTabObject(tab);
                 //internalTab.name = changeInfo.title;
                 DashboardManager.renameTab(internalTab);
             });
             
-             chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
+             browser.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
                 DashboardManager.removeTab({'id': removedTabId});
-                chrome.tabs.get(addedTabId, (tab: chrome.tabs.Tab) => {
+                browser.tabs.get(addedTabId, (tab: browser.tabs.Tab) => {
                     DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
                 });
             });
         }
         
-        public static GetInternalTabObject(tab:chrome.tabs.Tab): any{
+        public static GetInternalTabObject(tab:browser.tabs.Tab): any{
              return {
                     'id': tab.id,
                     'name': tab.title
@@ -51,7 +57,7 @@ module VBE {
         
         public static ListenFake(pluginid):void{
            var messagesDiv = DashboardManager.divMapper(pluginid);
-           chrome.runtime.onMessage.addListener(
+           browser.runtime.onMessage.addListener(
                 function(request, sender, sendResponse) {
                     messagesDiv.innerText += messagesDiv.innerText + (sender.tab ?
                                 "from a content script:" + sender.tab.url :
@@ -66,7 +72,7 @@ module VBE {
 
             //Loading tab list
             var tabs = [];
-            chrome.tabs.query({}, function(tabresult) {
+            browser.tabs.query({}, function(tabresult) {
                 for(var i = 0; i < tabresult.length; i++){
                     tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
                 }
@@ -243,7 +249,7 @@ module VBE {
                 }
             }
 
-            xhr.open("GET", chrome.extension.getURL(DashboardManager.CatalogUrl));
+            xhr.open("GET", browser.extension.getURL(DashboardManager.CatalogUrl));
             xhr.send();
         }
        

@@ -397,6 +397,11 @@ var VORLON;
 })(VORLON || (VORLON = {}));
 
 "use strict";
+window.browser = (function () {
+    return window.browser ||
+        window.chrome ||
+        window.msBrowser;
+})();
 var VORLON;
 (function (VORLON) {
     var ClientMessenger = (function () {
@@ -405,12 +410,12 @@ var VORLON;
             this._targetTabId = targetTabId;
             switch (side) {
                 case VORLON.RuntimeSide.Client:
-                    chrome.runtime.sendMessage({ extensionCommand: "getDashboardTabId" }, function (response) {
+                    browser.runtime.sendMessage({ extensionCommand: "getDashboardTabId" }, function (response) {
                         if (response) {
                             _this._dashboardTabId = response.tabId;
                         }
                     });
-                    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+                    browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         switch (request.extensionCommand) {
                             case "broadcastDashboardTabId":
                                 _this._dashboardTabId = request.tabId;
@@ -422,12 +427,12 @@ var VORLON;
                     });
                     break;
                 case VORLON.RuntimeSide.Dashboard:
-                    chrome.tabs.getCurrent(function (tab) {
+                    browser.tabs.getCurrent(function (tab) {
                         _this._dashboardTabId = tab.id;
-                        chrome.runtime.sendMessage({ extensionCommand: "broadcastDashboardTabId",
+                        browser.runtime.sendMessage({ extensionCommand: "broadcastDashboardTabId",
                             tabId: tab.id });
                     });
-                    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+                    browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         switch (request.extensionCommand) {
                             case "getDashboardTabId":
                                 sendResponse({ tabId: _this._dashboardTabId });
@@ -456,11 +461,11 @@ var VORLON;
             switch (side) {
                 case VORLON.RuntimeSide.Client:
                     message.extensionCommand = "messageToDashboard";
-                    chrome.runtime.sendMessage(message);
+                    browser.runtime.sendMessage(message);
                     break;
                 case VORLON.RuntimeSide.Dashboard:
                     message.extensionCommand = "messageToClient";
-                    chrome.tabs.sendMessage(this._targetTabId, message);
+                    browser.tabs.sendMessage(this._targetTabId, message);
                     break;
                     return;
             }

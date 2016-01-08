@@ -1,4 +1,9 @@
 "use strict";
+window.browser = (function () {
+    return window.browser ||
+        window.chrome ||
+        window.msBrowser;
+})();
 var VORLON;
 (function (VORLON) {
     var DashboardManager = (function () {
@@ -11,23 +16,23 @@ var VORLON;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "../pluginscatalog.json";
             DashboardManager.GetTabs();
-            chrome.tabs.onCreated.addListener(function (tab) {
+            browser.tabs.onCreated.addListener(function (tab) {
                 DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
             });
-            chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+            browser.tabs.onRemoved.addListener(function (tabId, removeInfo) {
                 DashboardManager.removeTab({ 'id': tabId });
                 if (tabId === DashboardManager.TargetTabid) {
                     DashboardManager.showWaitingLogo();
                 }
             });
-            chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+            browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 var internalTab = DashboardManager.GetInternalTabObject(tab);
                 //internalTab.name = changeInfo.title;
                 DashboardManager.renameTab(internalTab);
             });
-            chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
+            browser.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
                 DashboardManager.removeTab({ 'id': removedTabId });
-                chrome.tabs.get(addedTabId, function (tab) {
+                browser.tabs.get(addedTabId, function (tab) {
                     DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
                 });
             });
@@ -43,7 +48,7 @@ var VORLON;
             DashboardManager.TabList = {};
             //Loading tab list
             var tabs = [];
-            chrome.tabs.query({}, function (tabresult) {
+            browser.tabs.query({}, function (tabresult) {
                 for (var i = 0; i < tabresult.length; i++) {
                     tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
                 }
@@ -180,7 +185,7 @@ var VORLON;
                     }
                 }
             };
-            xhr.open("GET", chrome.extension.getURL(DashboardManager.CatalogUrl));
+            xhr.open("GET", browser.extension.getURL(DashboardManager.CatalogUrl));
             xhr.send();
         };
         DashboardManager.hideWaitingLogo = function () {
