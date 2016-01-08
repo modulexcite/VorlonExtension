@@ -56,9 +56,6 @@ declare module VORLON {
         static hideWaitingLogo(): void;
         static showWaitingLogo(): void;
         static divMapper(pluginId: number): HTMLDivElement;
-        identify(): void;
-        static ResetDashboard(reload: boolean): void;
-        static ReloadClient(): void;
         static addTab(tab: any): void;
         static removeTab(tab: any): void;
         static renameTab(tab: any): void;
@@ -288,27 +285,6 @@ declare module VBE.BestPractices {
 }
 
 declare module VORLON {
-    class SampleClient extends ClientPlugin {
-        constructor();
-        getID(): string;
-        refresh(): void;
-        startClientSide(): void;
-        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
-    class SampleDashboard extends DashboardPlugin {
-        constructor();
-        getID(): string;
-        private _inputField;
-        private _outputDiv;
-        startDashboardSide(div?: HTMLDivElement): void;
-        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
         constructor();
@@ -338,6 +314,27 @@ declare module VORLON {
         featureName: string;
         isSupported: boolean;
         type: string;
+    }
+}
+
+declare module VORLON {
+    class SampleClient extends ClientPlugin {
+        constructor();
+        getID(): string;
+        refresh(): void;
+        startClientSide(): void;
+        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    class SampleDashboard extends DashboardPlugin {
+        constructor();
+        getID(): string;
+        private _inputField;
+        private _outputDiv;
+        startDashboardSide(div?: HTMLDivElement): void;
+        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
 }
 

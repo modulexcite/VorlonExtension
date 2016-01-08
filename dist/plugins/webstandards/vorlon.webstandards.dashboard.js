@@ -140,7 +140,7 @@ var VORLON;
                 if (rule.failed !== undefined) {
                     title.createChild("SPAN", "state fa " + (rule.failed ? "fa-close" : "fa-check"));
                 }
-                title.createChild("SPAN").html(rule.title);
+                title.createChild("SPAN").text(rule.title);
                 if (rule.rules) {
                     title.click(function () {
                         ruleitem.toggleClass("collapsed");
@@ -188,11 +188,11 @@ var VORLON;
                         item.addClass(rule.type);
                     item.append("H1", "title", function (title) {
                         title.createChild("SPAN", "state fa " + (rule.failed ? "fa-close" : "fa-check"));
-                        title.createChild("SPAN", "text").html(rule.title);
+                        title.createChild("SPAN", "text").text(rule.title);
                     });
                     if (rule.description) {
                         item.append("DIV", "description", function (desc) {
-                            desc.html(rule.description);
+                            desc.text(rule.description);
                         });
                     }
                     if (rule.items && rule.items.length) {
