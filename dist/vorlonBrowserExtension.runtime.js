@@ -406,7 +406,9 @@ var VORLON;
             switch (side) {
                 case VORLON.RuntimeSide.Client:
                     chrome.runtime.sendMessage({ extensionCommand: "getDashboardTabId" }, function (response) {
-                        this._dashboardTabId = response.tabId;
+                        if (response) {
+                            this._dashboardTabId = response.tabId;
+                        }
                     });
                     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         switch (request.extensionCommand) {
@@ -505,23 +507,18 @@ var VORLON;
         };
         _Core.prototype.StartClientSide = function () {
             VORLON.Core._side = VORLON.RuntimeSide.Client;
-            //Get the tab id
-            chrome.tabs.getCurrent(function (tab) {
-                VORLON.Core._tabId = tab.id;
-                VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, VORLON.Core._tabId);
-                // Connect messenger to dispatcher
-                VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
-                // Launch plugins
-                for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
-                    var plugin = VORLON.Core._clientPlugins[index];
-                    plugin.startClientSide();
-                }
-            });
+            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side);
+            // Connect messenger to dispatcher
+            VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
+            // Launch plugins
+            for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
+                var plugin = VORLON.Core._clientPlugins[index];
+                plugin.startClientSide();
+            }
         };
         _Core.prototype.StartDashboardSide = function (tabid, divMapper) {
             VORLON.Core._side = VORLON.RuntimeSide.Dashboard;
-            VORLON.Core._tabId = tabid;
-            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, VORLON.Core._tabId);
+            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, tabid);
             // Connect messenger to dispatcher
             VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
             // Launch plugins
@@ -531,7 +528,6 @@ var VORLON;
             }
         };
         _Core.prototype._OnIdentificationReceived = function (id) {
-            VORLON.Core._tabId = id;
             if (VORLON.Core._side === VORLON.RuntimeSide.Client) {
                 // Refresh plugins
                 for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
@@ -603,6 +599,35 @@ var VORLON;
 })(VORLON || (VORLON = {}));
 
 "use strict";
+var VORLON;
+(function (VORLON) {
+    var BasePlugin = (function () {
+        function BasePlugin(name) {
+            this.name = name;
+            this._ready = true;
+            this._id = "";
+            this._type = VORLON.PluginType.OneOne;
+            this.loadingDirectory = "../plugins";
+        }
+        Object.defineProperty(BasePlugin.prototype, "Type", {
+            get: function () {
+                return this._type;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        BasePlugin.prototype.getID = function () {
+            return this._id;
+        };
+        BasePlugin.prototype.isReady = function () {
+            return this._ready;
+        };
+        return BasePlugin;
+    })();
+    VORLON.BasePlugin = BasePlugin;
+})(VORLON || (VORLON = {}));
+
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -668,35 +693,6 @@ var VORLON;
         return ClientPlugin;
     })(VORLON.BasePlugin);
     VORLON.ClientPlugin = ClientPlugin;
-})(VORLON || (VORLON = {}));
-
-"use strict";
-var VORLON;
-(function (VORLON) {
-    var BasePlugin = (function () {
-        function BasePlugin(name) {
-            this.name = name;
-            this._ready = true;
-            this._id = "";
-            this._type = VORLON.PluginType.OneOne;
-            this.loadingDirectory = "../plugins";
-        }
-        Object.defineProperty(BasePlugin.prototype, "Type", {
-            get: function () {
-                return this._type;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        BasePlugin.prototype.getID = function () {
-            return this._id;
-        };
-        BasePlugin.prototype.isReady = function () {
-            return this._ready;
-        };
-        return BasePlugin;
-    })();
-    VORLON.BasePlugin = BasePlugin;
 })(VORLON || (VORLON = {}));
 
 "use strict";

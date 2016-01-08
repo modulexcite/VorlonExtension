@@ -5,7 +5,6 @@ module VORLON {
         _clientPlugins = new Array<ClientPlugin>();
         _dashboardPlugins = new Array<DashboardPlugin>();
         _messenger: ClientMessenger;
-        _tabId: number;
         _side: RuntimeSide;
 
         public get Messenger(): ClientMessenger {
@@ -30,27 +29,21 @@ module VORLON {
 
         public StartClientSide(): void {
             Core._side = RuntimeSide.Client;
-         
-            //Get the tab id
-            chrome.tabs.getCurrent((tab: chrome.tabs.Tab) => {
-                Core._tabId = tab.id;
-                Core._messenger = new ClientMessenger(Core._side, Core._tabId);
+            Core._messenger = new ClientMessenger(Core._side);
 
-                // Connect messenger to dispatcher
-                Core.Messenger.onRealtimeMessageReceived = Core._Dispatch;
+            // Connect messenger to dispatcher
+            Core.Messenger.onRealtimeMessageReceived = Core._Dispatch;
 
-                // Launch plugins
-                for (var index = 0; index < Core._clientPlugins.length; index++) {
-                    var plugin = Core._clientPlugins[index];
-                    plugin.startClientSide();
-                }
-            });
+            // Launch plugins
+            for (var index = 0; index < Core._clientPlugins.length; index++) {
+                var plugin = Core._clientPlugins[index];
+                plugin.startClientSide();
+            }
         }
 
         public StartDashboardSide(tabid: number, divMapper: (number) => HTMLDivElement): void {
             Core._side = RuntimeSide.Dashboard;
-            Core._tabId = tabid;
-            Core._messenger = new ClientMessenger(Core._side, Core._tabId);
+            Core._messenger = new ClientMessenger(Core._side, tabid);
 
             // Connect messenger to dispatcher
             Core.Messenger.onRealtimeMessageReceived = Core._Dispatch;
@@ -63,8 +56,6 @@ module VORLON {
         }
 
         private _OnIdentificationReceived(id: number): void {
-            Core._tabId = id;
-
             if (Core._side === RuntimeSide.Client) {
                 // Refresh plugins
                 for (var index = 0; index < Core._clientPlugins.length; index++) {

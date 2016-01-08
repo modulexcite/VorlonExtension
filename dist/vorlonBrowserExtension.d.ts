@@ -148,7 +148,6 @@ declare module VORLON {
         _clientPlugins: ClientPlugin[];
         _dashboardPlugins: DashboardPlugin[];
         _messenger: ClientMessenger;
-        _tabId: number;
         _side: RuntimeSide;
         Messenger: ClientMessenger;
         ClientPlugins: Array<ClientPlugin>;

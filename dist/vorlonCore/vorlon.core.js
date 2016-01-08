@@ -35,23 +35,18 @@ var VORLON;
         };
         _Core.prototype.StartClientSide = function () {
             VORLON.Core._side = VORLON.RuntimeSide.Client;
-            //Get the tab id
-            chrome.tabs.getCurrent(function (tab) {
-                VORLON.Core._tabId = tab.id;
-                VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, VORLON.Core._tabId);
-                // Connect messenger to dispatcher
-                VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
-                // Launch plugins
-                for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
-                    var plugin = VORLON.Core._clientPlugins[index];
-                    plugin.startClientSide();
-                }
-            });
+            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side);
+            // Connect messenger to dispatcher
+            VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
+            // Launch plugins
+            for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
+                var plugin = VORLON.Core._clientPlugins[index];
+                plugin.startClientSide();
+            }
         };
         _Core.prototype.StartDashboardSide = function (tabid, divMapper) {
             VORLON.Core._side = VORLON.RuntimeSide.Dashboard;
-            VORLON.Core._tabId = tabid;
-            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, VORLON.Core._tabId);
+            VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, tabid);
             // Connect messenger to dispatcher
             VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
             // Launch plugins
@@ -61,7 +56,6 @@ var VORLON;
             }
         };
         _Core.prototype._OnIdentificationReceived = function (id) {
-            VORLON.Core._tabId = id;
             if (VORLON.Core._side === VORLON.RuntimeSide.Client) {
                 // Refresh plugins
                 for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {

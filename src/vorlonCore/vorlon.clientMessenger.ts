@@ -23,7 +23,9 @@ module VORLON {
             switch (side) {
                 case RuntimeSide.Client:
                     chrome.runtime.sendMessage({extensionCommand: "getDashboardTabId"}, function(response) {
-                        this._dashboardTabId = response.tabId;
+                        if(response){
+                            this._dashboardTabId = response.tabId;
+                        }
                     });
                     chrome.runtime.onMessage.addListener(
                         function(request, sender, sendResponse) {

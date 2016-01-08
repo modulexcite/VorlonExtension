@@ -39,8 +39,8 @@ gulp.task("runtime", ['typescript-compile'], function () {
         "dist/vorlonCore/vorlon.enums.js",
         "dist/vorlonCore/vorlon.clientMessenger.js",
         "dist/vorlonCore/vorlon.core.js",
-        "dist/vorlonCore/vorlon.clientPlugin.js",
-        "dist/vorlonCore/vorlon.basePlugin.js"
+        "dist/vorlonCore/vorlon.basePlugin.js",
+        "dist/vorlonCore/vorlon.clientPlugin.js"
     ];
     
     for (var index = 0; index < catalog.plugins.length; index++) {
