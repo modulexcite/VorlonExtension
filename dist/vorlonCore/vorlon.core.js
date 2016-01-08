@@ -53,15 +53,7 @@ var VORLON;
             for (var index = 0; index < VORLON.Core._dashboardPlugins.length; index++) {
                 var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
-<<<<<<< HEAD
                 VORLON.Core.Messenger.sendRealtimeMessage(plugin.getID(), {}, VORLON.RuntimeSide.Dashboard, "refresh");
-=======
-            }
-            // Refresh plugins
-            for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
-                var clientPlugin = VORLON.Core._clientPlugins[index];
-                clientPlugin.refresh();
->>>>>>> 8fba5ba9aed9811e5212a3d99667f71c00ea8fbb
             }
         };
         _Core.prototype._Dispatch = function (message) {

@@ -37,6 +37,10 @@ module VORLON {
                 Core.Messenger.sendRealtimeMessage(pluginId, data, RuntimeSide.Client, "protocol", command);
             }
         }
+        
+        public trace(message:string):void {
+            console.log(message);
+        }
 
         public _insertHtmlContentAsync(divContainer: HTMLDivElement, callback: (filledDiv: HTMLDivElement) => void): void {
             var basedUrl = this.loadingDirectory + "/" + this.name + "/";

@@ -37,6 +37,9 @@ var VORLON;
                 VORLON.Core.Messenger.sendRealtimeMessage(pluginId, data, VORLON.RuntimeSide.Client, "protocol", command);
             }
         };
+        DashboardPlugin.prototype.trace = function (message) {
+            console.log(message);
+        };
         DashboardPlugin.prototype._insertHtmlContentAsync = function (divContainer, callback) {
             var _this = this;
             var basedUrl = this.loadingDirectory + "/" + this.name + "/";

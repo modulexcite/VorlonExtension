@@ -12,7 +12,6 @@ module VORLON {
 
         public startClientSide(): void { }
         public onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void { }
-
         
         public sendToDashboard(data: any){
             if (Core.Messenger)
@@ -23,6 +22,10 @@ module VORLON {
             if (Core.Messenger) {
                 Core.Messenger.sendRealtimeMessage(this.getID(), data, RuntimeSide.Client, "message", command);
             }
+        }
+        
+        public trace(message:string):void {
+            console.log(message);
         }
 
         public refresh(): void {

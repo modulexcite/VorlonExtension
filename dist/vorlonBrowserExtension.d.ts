@@ -170,6 +170,7 @@ declare module VORLON {
         onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
         sendToDashboard(data: any): void;
         sendCommandToDashboard(command: string, data?: any): void;
+        trace(message: string): void;
         refresh(): void;
         _loadNewScriptAsync(scriptName: string, callback: () => void, waitForDOMContentLoaded?: boolean): void;
     }
@@ -211,6 +212,7 @@ declare module VORLON {
         sendCommandToClient(command: string, data?: any): void;
         sendCommandToPluginClient(pluginId: string, command: string, data?: any): void;
         sendCommandToPluginDashboard(pluginId: string, command: string, data?: any): void;
+        trace(message: string): void;
         _insertHtmlContentAsync(divContainer: HTMLDivElement, callback: (filledDiv: HTMLDivElement) => void): void;
         private _stripContent(content);
     }
@@ -337,4 +339,178 @@ declare module VORLON {
         startDashboardSide(div?: HTMLDivElement): void;
         onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
+}
+
+declare var cssjs: any;
+declare module VORLON {
+    class WebStandardsClient extends ClientPlugin {
+        sendedHTML: string;
+        private _doctype;
+        private _currentAnalyze;
+        private _refreshLoop;
+        browserDetectionHook: {
+            userAgent: any[];
+            appVersion: any[];
+            appName: any[];
+            product: any[];
+            vendor: any[];
+        };
+        private exceptions;
+        constructor();
+        refresh(): void;
+        startClientSide(): void;
+        hook(root: any, prop: any): void;
+        startNewAnalyze(data: any): void;
+        checkLoadingState(): void;
+        initialiseRuleSummary(rule: any, analyze: any): any;
+        prepareAnalyze(analyze: any): void;
+        endAnalyze(analyze: any): void;
+        cancelAnalyse(id: string): void;
+        analyzeDOM(document: HTMLDocument, htmlContent: string, analyze: any): void;
+        analyzeDOMNode(node: Node, rules: any, analyze: any, htmlContent: string): void;
+        applyDOMNodeRule(node: Node, rule: IDOMRule, analyze: any, htmlContent: string): void;
+        analyzeCssDocument(url: any, content: any, analyze: any): void;
+        analyzeFiles(analyze: any): void;
+        analyzeJsDocument(url: any, content: any, analyze: any): void;
+        getDocumentContent(data: {
+            analyzeid: string;
+            url: string;
+        }, file: {
+            content: string;
+            loaded: boolean;
+            status?: number;
+            encoding?: string;
+            contentLength?: number;
+            error?: any;
+        }, resultcallback: (url: string, file: {
+            content: string;
+            loaded: boolean;
+        }) => void): void;
+        xhrDocumentContent(data: {
+            analyzeid: string;
+            url: string;
+        }, resultcallback: (url: string, content: string, status: number, contentlength?: number, encoding?: string, errors?: any) => void): void;
+        getAbsolutePath(url: any): string;
+    }
+}
+
+declare var cssjs: any;
+declare module VORLON {
+    class WebStandardsDashboard extends DashboardPlugin {
+        constructor();
+        private _startCheckButton;
+        private _cancelCheckButton;
+        private _rootDiv;
+        private _currentAnalyseId;
+        private _analysePending;
+        private _analyseResult;
+        private _rulesPanel;
+        private _ruleDetailPanel;
+        analyzeCssFallback: boolean;
+        startDashboardSide(div?: HTMLDivElement): void;
+        setAnalyseResult(result: any): void;
+        analyseCanceled(id: string): void;
+        checkLoadingState(): void;
+    }
+}
+
+declare module VORLON {
+    interface IRuleCheck {
+        items?: IRuleCheck[];
+        title?: string;
+        description?: string;
+        alert?: string;
+        message?: string;
+        content?: string;
+        type?: string;
+        failed?: boolean;
+        data?: any;
+        skipRootLevel?: boolean;
+    }
+    interface IRule {
+        id: string;
+        title: string;
+        disabled?: boolean;
+        description?: string;
+        prepare?: (rulecheck: IRuleCheck, analyzeSummary) => void;
+        endcheck?: (rulecheck: IRuleCheck, analyzeSummary) => void;
+    }
+    interface IDOMRule extends IRule {
+        nodeTypes: string[];
+        check: (node, rulecheck: IRuleCheck, analyze, htmlcontent) => void;
+        generalRule?: boolean;
+    }
+    interface ICSSRule extends IRule {
+        check: (url: string, ast, rulecheck, analyzeSummary) => void;
+    }
+    interface IFileRule extends IRule {
+        check: (rulecheck: any, analyzeSummary: any) => void;
+    }
+    interface IScriptRule extends IRule {
+        check: (url: string, javascriptContent: string, rulecheck: any, analyzeSummary: any) => void;
+    }
+}
+
+declare var axe: any;
+declare module VORLON.WebStandards.Rules.Accessibility {
+    var aXeCheck: IRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var deviceIcons: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.CSS {
+    var mobileMediaqueries: ICSSRule;
+}
+declare module VORLON.WebStandards.Rules.DOM {
+    var mobileMediaqueries: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var useViewport: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.Files {
+    var filesBundle: IFileRule;
+}
+
+declare module VORLON.WebStandards.Rules.Files {
+    var contentEncoding: IFileRule;
+}
+
+declare module VORLON.WebStandards.Rules.Files {
+    var filesMinification: IFileRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var dontUsePlugins: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var browserdetection: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var browserinterop: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var dontUseBrowserConditionalComment: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.CSS {
+    var cssfallback: ICSSRule;
+}
+
+declare module VORLON.WebStandards.Rules.CSS {
+    var cssprefixes: ICSSRule;
+}
+
+declare module VORLON.WebStandards.Rules.DOM {
+    var modernDocType: IDOMRule;
+}
+
+declare module VORLON.WebStandards.Rules.JavaScript {
+    var librariesVersions: IScriptRule;
 }

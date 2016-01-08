@@ -23,6 +23,9 @@ var VORLON;
                 VORLON.Core.Messenger.sendRealtimeMessage(this.getID(), data, VORLON.RuntimeSide.Client, "message", command);
             }
         };
+        ClientPlugin.prototype.trace = function (message) {
+            console.log(message);
+        };
         ClientPlugin.prototype.refresh = function () {
             console.error("Please override plugin.refresh()");
         };
