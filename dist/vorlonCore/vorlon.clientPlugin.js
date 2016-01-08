@@ -27,39 +27,7 @@ var VORLON;
             console.error("Please override plugin.refresh()");
         };
         ClientPlugin.prototype._loadNewScriptAsync = function (scriptName, callback, waitForDOMContentLoaded) {
-            var _this = this;
-            var basedUrl = "";
-            if (this.loadingDirectory.indexOf('http') === 0) {
-                if (scriptName[0] == "/") {
-                    basedUrl = "";
-                }
-                else {
-                    basedUrl = this.loadingDirectory + "/" + this.name + "/";
-                }
-            }
-            else {
-                if (scriptName[0] == "/") {
-                    basedUrl = vorlonBaseURL;
-                }
-                else {
-                    basedUrl = vorlonBaseURL + "/" + this.loadingDirectory + "/" + this.name + "/";
-                }
-            }
-            function loadScript() {
-                var scriptToLoad = document.createElement("script");
-                scriptToLoad.setAttribute("src", basedUrl + scriptName);
-                scriptToLoad.onload = callback;
-                var first = document.getElementsByTagName('script')[0];
-                first.parentNode.insertBefore(scriptToLoad, first);
-            }
-            if (!waitForDOMContentLoaded || document.body) {
-                loadScript();
-            }
-            else {
-                document.addEventListener("DOMContentLoaded", function () {
-                    _this._loadNewScriptAsync(scriptName, callback, waitForDOMContentLoaded);
-                });
-            }
+            // NOT NEEDED IN EXTENSION VERSION
         };
         return ClientPlugin;
     })(VORLON.BasePlugin);

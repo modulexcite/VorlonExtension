@@ -1,5 +1,6 @@
 {
     "plugins": [
-        { "id": "SAMPLE", "name": "Sample On peut pas creuser", "foldername": "sample" }
+        { "id": "SAMPLE", "name": "Sample", "foldername": "sample" },
+        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport" }
     ]
 }

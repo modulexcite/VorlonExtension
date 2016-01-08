@@ -53,15 +53,11 @@ module VORLON {
                 var plugin = Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
             }
-        }
-
-        private _OnIdentificationReceived(id: number): void {
-            if (Core._side === RuntimeSide.Client) {
-                // Refresh plugins
-                for (var index = 0; index < Core._clientPlugins.length; index++) {
-                    var plugin = Core._clientPlugins[index];
-                    plugin.refresh();
-                }
+            
+            // Refresh plugins
+            for (var index = 0; index < Core._clientPlugins.length; index++) {
+                var clientPlugin = Core._clientPlugins[index];
+                clientPlugin.refresh();
             }
         }
 

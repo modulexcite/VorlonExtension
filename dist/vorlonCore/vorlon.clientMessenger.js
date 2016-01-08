@@ -9,17 +9,16 @@ var VORLON;
                 case VORLON.RuntimeSide.Client:
                     chrome.runtime.sendMessage({ extensionCommand: "getDashboardTabId" }, function (response) {
                         if (response) {
-                            this._dashboardTabId = response.tabId;
+                            _this._dashboardTabId = response.tabId;
                         }
                     });
                     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         switch (request.extensionCommand) {
                             case "broadcastDashboardTabId":
-                                this._dashboardTabId = request.tabId;
+                                _this._dashboardTabId = request.tabId;
                                 break;
-                            case "message":
-                                var received = JSON.parse(request.message);
-                                this.onRealtimeMessageReceived(received);
+                            case "messageToClient":
+                                _this.onRealtimeMessageReceived(request);
                                 break;
                         }
                     });
@@ -33,11 +32,10 @@ var VORLON;
                     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         switch (request.extensionCommand) {
                             case "getDashboardTabId":
-                                sendResponse({ tabId: this._dashboardTabId });
+                                sendResponse({ tabId: _this._dashboardTabId });
                                 break;
-                            case "message":
-                                var received = JSON.parse(request.message);
-                                this.onRealtimeMessageReceived(received);
+                            case "messageToDashboard":
+                                _this.onRealtimeMessageReceived(request);
                                 break;
                         }
                     });
@@ -51,18 +49,19 @@ var VORLON;
                     pluginID: pluginID,
                     side: side
                 },
-                data: objectToSend,
-                extensionCommand: "message"
+                data: objectToSend
             };
             if (command) {
                 message.command = command;
             }
             switch (side) {
                 case VORLON.RuntimeSide.Client:
-                    chrome.tabs.sendMessage(this._dashboardTabId, JSON.stringify(message));
+                    message.extensionCommand = "messageToDashboard";
+                    chrome.runtime.sendMessage(message);
                     break;
                 case VORLON.RuntimeSide.Dashboard:
-                    chrome.tabs.sendMessage(this._targetTabId, JSON.stringify(message));
+                    message.extensionCommand = "messageToClient";
+                    chrome.tabs.sendMessage(this._targetTabId, message);
                     break;
                     return;
             }

@@ -30,37 +30,7 @@ module VORLON {
         }
         
         public _loadNewScriptAsync(scriptName: string, callback: () => void, waitForDOMContentLoaded?: boolean) {
-            var basedUrl = "";
-            if(this.loadingDirectory.indexOf('http') === 0){    
-                if (scriptName[0] == "/"){
-                    basedUrl = "";
-                } else {         
-                    basedUrl = this.loadingDirectory + "/" + this.name + "/";
-                }
-            }
-            else{
-                if (scriptName[0] == "/"){
-                    basedUrl = vorlonBaseURL;
-                } else {
-                    basedUrl = vorlonBaseURL + "/" + this.loadingDirectory + "/" + this.name + "/";
-                }
-            }
-            
-            function loadScript() {
-                var scriptToLoad = document.createElement("script");
-                scriptToLoad.setAttribute("src", basedUrl + scriptName);
-                scriptToLoad.onload = callback;
-                var first = document.getElementsByTagName('script')[0];
-                first.parentNode.insertBefore(scriptToLoad, first);
-            }
-            if (!waitForDOMContentLoaded || document.body) {
-                loadScript();
-            }
-            else {
-                document.addEventListener("DOMContentLoaded", () => {
-                    this._loadNewScriptAsync(scriptName, callback, waitForDOMContentLoaded);
-                });
-            }
+            // NOT NEEDED IN EXTENSION VERSION
         }
     }
 }
