@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["vorlonBrowserExtension.runtime.js", "plugins/modernizrReport/modernizr.js"],
+      "js": ["vorlonBrowserExtension.runtime.js"],
       "run_at": "document_start"
     }
   ],
