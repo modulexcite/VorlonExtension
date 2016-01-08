@@ -141,6 +141,9 @@ declare module VORLON {
 }
 
 declare module VORLON {
+}
+
+declare module VORLON {
     class _Core {
         _clientPlugins: ClientPlugin[];
         _dashboardPlugins: DashboardPlugin[];
