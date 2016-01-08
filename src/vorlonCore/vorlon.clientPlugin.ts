@@ -30,7 +30,8 @@ module VORLON {
         }
         
         public _loadNewScriptAsync(scriptName: string, callback: () => void, waitForDOMContentLoaded?: boolean) {
-            // NOT NEEDED IN EXTENSION VERSION
+            callback();
+            // NOTHING ELSE NEEDED IN EXTENSION VERSION
         }
     }
 }

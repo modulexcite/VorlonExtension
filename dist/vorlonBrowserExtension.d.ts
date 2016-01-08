@@ -145,6 +145,7 @@ declare module VORLON {
     interface VorlonMessageMetadata {
         pluginID: string;
         side: RuntimeSide;
+        messageType: string;
     }
     interface VorlonMessage {
         metadata: VorlonMessageMetadata;
@@ -190,7 +191,6 @@ declare module VORLON {
         RegisterDashboardPlugin(plugin: DashboardPlugin): void;
         StartClientSide(): void;
         StartDashboardSide(tabid: number, divMapper: (number) => HTMLDivElement): void;
-        private _OnIdentificationReceived(id);
         private _Dispatch(message);
         private _DispatchPluginMessage(plugin, message);
         private _DispatchFromClientPluginMessage(plugin, message);

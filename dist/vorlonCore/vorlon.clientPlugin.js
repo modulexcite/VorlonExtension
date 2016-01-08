@@ -27,7 +27,8 @@ var VORLON;
             console.error("Please override plugin.refresh()");
         };
         ClientPlugin.prototype._loadNewScriptAsync = function (scriptName, callback, waitForDOMContentLoaded) {
-            // NOT NEEDED IN EXTENSION VERSION
+            callback();
+            // NOTHING ELSE NEEDED IN EXTENSION VERSION
         };
         return ClientPlugin;
     })(VORLON.BasePlugin);

@@ -47,7 +47,8 @@ var VORLON;
             var message = {
                 metadata: {
                     pluginID: pluginID,
-                    side: side
+                    side: side,
+                    messageType: messageType
                 },
                 data: objectToSend
             };

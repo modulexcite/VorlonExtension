@@ -52,15 +52,10 @@ module VORLON {
             for (var index = 0; index < Core._dashboardPlugins.length; index++) {
                 var plugin = Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
-            }
-            
-            // Refresh plugins
-            for (var index = 0; index < Core._clientPlugins.length; index++) {
-                var clientPlugin = Core._clientPlugins[index];
-                clientPlugin.refresh();
+                Core.Messenger.sendRealtimeMessage(plugin.getID(), {}, RuntimeSide.Dashboard, "refresh");    
             }
         }
-
+        
         private _Dispatch(message: VorlonMessage): void {
             if (!message.metadata) {
                 console.error('invalid message ' + JSON.stringify(message));
@@ -95,7 +90,12 @@ module VORLON {
             if (message.metadata.side === RuntimeSide.Client) {
                 Core._DispatchFromClientPluginMessage(<DashboardPlugin>plugin, message);
             } else {
-                Core._DispatchFromDashboardPluginMessage(<ClientPlugin>plugin, message);
+                if(message.metadata.messageType === "refresh"){
+                    (<ClientPlugin>plugin).refresh();
+                }
+                else {
+                    Core._DispatchFromDashboardPluginMessage(<ClientPlugin>plugin, message);
+                }
             }
         }
 

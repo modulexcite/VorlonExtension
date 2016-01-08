@@ -3,6 +3,7 @@ module VORLON {
     export interface VorlonMessageMetadata {
         pluginID : string;
         side : RuntimeSide;
+        messageType: string;
     }
 
     export interface VorlonMessage {
@@ -65,7 +66,8 @@ module VORLON {
                 var message: VorlonMessage = {
                     metadata: {
                         pluginID: pluginID,
-                        side: side
+                        side: side,
+                        messageType: messageType
                     },
                     data: objectToSend
                 };

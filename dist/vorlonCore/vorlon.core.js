@@ -53,15 +53,7 @@ var VORLON;
             for (var index = 0; index < VORLON.Core._dashboardPlugins.length; index++) {
                 var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
-            }
-        };
-        _Core.prototype._OnIdentificationReceived = function (id) {
-            if (VORLON.Core._side === VORLON.RuntimeSide.Client) {
-                // Refresh plugins
-                for (var index = 0; index < VORLON.Core._clientPlugins.length; index++) {
-                    var plugin = VORLON.Core._clientPlugins[index];
-                    plugin.refresh();
-                }
+                VORLON.Core.Messenger.sendRealtimeMessage(plugin.getID(), {}, VORLON.RuntimeSide.Dashboard, "refresh");
             }
         };
         _Core.prototype._Dispatch = function (message) {
@@ -97,7 +89,12 @@ var VORLON;
                 VORLON.Core._DispatchFromClientPluginMessage(plugin, message);
             }
             else {
-                VORLON.Core._DispatchFromDashboardPluginMessage(plugin, message);
+                if (message.metadata.messageType === "refresh") {
+                    plugin.refresh();
+                }
+                else {
+                    VORLON.Core._DispatchFromDashboardPluginMessage(plugin, message);
+                }
             }
         };
         _Core.prototype._DispatchFromClientPluginMessage = function (plugin, message) {
