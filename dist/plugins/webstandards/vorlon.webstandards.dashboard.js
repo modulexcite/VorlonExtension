@@ -18,7 +18,6 @@ var VORLON;
             _super.call(this, "webstandards", "control.html", "control.css");
             this._rulesPanel = null;
             this._ruleDetailPanel = null;
-            this.analyzeCssFallback = true;
             this._id = "WEBSTANDARDS";
             //this.debug = true;
             this._ready = true;
@@ -26,9 +25,6 @@ var VORLON;
         WebStandardsDashboard.prototype.startDashboardSide = function (div) {
             var _this = this;
             if (div === void 0) { div = null; }
-            var script = document.createElement("SCRIPT");
-            script.src = "/javascripts/css.js";
-            document.body.appendChild(script);
             this._insertHtmlContentAsync(div, function (filledDiv) {
                 _this._ruleDetailPanel = new WebStandardsRuleDetailPanel(_this, filledDiv.querySelector('#webstandards-ruledetailpanel'));
                 _this._rulesPanel = new WebStandardsRulesPanel(_this, filledDiv.querySelector('#webstandards-rulespanel'), _this._ruleDetailPanel);
@@ -44,7 +40,7 @@ var VORLON;
                     _this._currentAnalyseId = VORLON.Tools.CreateGUID();
                     _this._analysePending = true;
                     _this._analyseResult = null;
-                    _this.sendCommandToClient('startNewAnalyze', { id: _this._currentAnalyseId, analyzeCssFallback: _this.analyzeCssFallback });
+                    _this.sendCommandToClient('startNewAnalyze', { id: _this._currentAnalyseId });
                 });
                 _this._cancelCheckButton.addEventListener("click", function (evt) {
                     _this.sendCommandToClient('cancelAnalyze', { id: _this._currentAnalyseId });

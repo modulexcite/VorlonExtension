@@ -4,8 +4,6 @@
   position: relative;
 }
 .plugin-webstandards #webstandardspanel x-controlbar .loadingstate {
-  font-size: 16pt;
-  line-height: 26px;
   margin-left: 10px;
   display: none;
 }

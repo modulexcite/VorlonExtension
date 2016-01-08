@@ -43,14 +43,14 @@ var VORLON;
                         if (!rulecheck.data.hasIOSIcons) {
                             rulecheck.failed = true;
                             rulecheck.items.push({
-                                title: VORLON.Tools.htmlToString('add Apple - iOS icons by adding link tags like <link rel="apple-touch-icon-precomposed" href="youricon" sizes="57x57" />')
+                                title: 'add Apple - iOS icons by adding link tags like <link rel="apple-touch-icon" href="youricon" sizes="57x57"" />'
                             });
                         }
                         if (!rulecheck.data.hasWindowsIcons) {
                             rulecheck.failed = true;
                             //https://msdn.microsoft.com/en-us/library/dn255024(v=vs.85).aspx
                             rulecheck.items.push({
-                                title: VORLON.Tools.htmlToString('add Microsoft - Windows tiles by adding meta tags like <link name="msapplication-square150x150logo" content="yourimage" />')
+                                title: 'add Microsoft - Windows tiles by adding meta tags like <link name="msapplication-square150x150logo" content="yourimage" />'
                             });
                         }
                     }
