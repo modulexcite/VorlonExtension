@@ -288,6 +288,27 @@ declare module VBE.BestPractices {
 }
 
 declare module VORLON {
+    class SampleClient extends ClientPlugin {
+        constructor();
+        getID(): string;
+        refresh(): void;
+        startClientSide(): void;
+        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    class SampleDashboard extends DashboardPlugin {
+        constructor();
+        getID(): string;
+        private _inputField;
+        private _outputDiv;
+        startDashboardSide(div?: HTMLDivElement): void;
+        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
         constructor();
@@ -317,27 +338,6 @@ declare module VORLON {
         featureName: string;
         isSupported: boolean;
         type: string;
-    }
-}
-
-declare module VORLON {
-    class SampleClient extends ClientPlugin {
-        constructor();
-        getID(): string;
-        refresh(): void;
-        startClientSide(): void;
-        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
-    class SampleDashboard extends DashboardPlugin {
-        constructor();
-        getID(): string;
-        private _inputField;
-        private _outputDiv;
-        startDashboardSide(div?: HTMLDivElement): void;
-        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
 }
 
@@ -406,7 +406,6 @@ declare module VORLON {
         private _analyseResult;
         private _rulesPanel;
         private _ruleDetailPanel;
-        analyzeCssFallback: boolean;
         startDashboardSide(div?: HTMLDivElement): void;
         setAnalyseResult(result: any): void;
         analyseCanceled(id: string): void;
