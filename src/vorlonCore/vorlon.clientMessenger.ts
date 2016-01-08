@@ -1,4 +1,10 @@
 ﻿"use strict"
+window.browser = (function(){
+  return  window.browser      ||
+          window.chrome       ||
+          window.msBrowser;
+})();
+
 module VORLON {
     export interface VorlonMessageMetadata {
         pluginID : string;
@@ -23,12 +29,12 @@ module VORLON {
             
             switch (side) {
                 case RuntimeSide.Client:
-                    chrome.runtime.sendMessage({extensionCommand: "getDashboardTabId"}, (response) => {
+                    browser.runtime.sendMessage({extensionCommand: "getDashboardTabId"}, (response) => {
                         if(response){
                             this._dashboardTabId = response.tabId;
                         }
                     });
-                    chrome.runtime.onMessage.addListener(
+                    browser.runtime.onMessage.addListener(
                         (request, sender, sendResponse) => {
                             switch (request.extensionCommand) {
                                 case "broadcastDashboardTabId":
@@ -41,13 +47,13 @@ module VORLON {
                         });
                     break;
                 case RuntimeSide.Dashboard:
-                    chrome.tabs.getCurrent((tab) => {
+                    browser.tabs.getCurrent((tab) => {
                          this._dashboardTabId = tab.id;
-                         chrome.runtime.sendMessage(
+                         browser.runtime.sendMessage(
                             {extensionCommand: "broadcastDashboardTabId", 
                             tabId: tab.id});
                         });
-                   chrome.runtime.onMessage.addListener(
+                   browser.runtime.onMessage.addListener(
                         (request, sender, sendResponse) => {
                             switch (request.extensionCommand) {
                                 case "getDashboardTabId":
@@ -79,11 +85,11 @@ module VORLON {
                 switch (side) {
                     case RuntimeSide.Client:
                         message.extensionCommand = "messageToDashboard";
-                        chrome.runtime.sendMessage(message);
+                        browser.runtime.sendMessage(message);
                         break;
                     case RuntimeSide.Dashboard:
                         message.extensionCommand = "messageToClient";
-                        chrome.tabs.sendMessage(this._targetTabId, message);
+                        browser.tabs.sendMessage(this._targetTabId, message);
                         break;
                 return;
             }

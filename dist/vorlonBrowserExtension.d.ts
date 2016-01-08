@@ -9,7 +9,7 @@ declare module VBE {
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
-        static GetInternalTabObject(tab: chrome.tabs.Tab): any;
+        static GetInternalTabObject(tab: browser.tabs.Tab): any;
         static ListenFake(pluginid: any): void;
         static GetTabs(): void;
         static AddTabToList(tab: any): void;
@@ -47,7 +47,7 @@ declare module VORLON {
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
-        static GetInternalTabObject(tab: chrome.tabs.Tab): any;
+        static GetInternalTabObject(tab: browser.tabs.Tab): any;
         static GetTabs(): void;
         static AddTabToList(tab: any): void;
         static TabCount(): number;

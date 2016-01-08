@@ -4,6 +4,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+window.browser = (function () {
+    return window.browser ||
+        window.chrome ||
+        window.msBrowser;
+})();
 var VORLON;
 (function (VORLON) {
     var DashboardPlugin = (function (_super) {
@@ -51,7 +56,7 @@ var VORLON;
                 alone = true;
             }
             var request = new XMLHttpRequest();
-            request.open('GET', chrome.extension.getURL(basedUrl + this.htmlFragmentUrl), true);
+            request.open('GET', browser.extension.getURL(basedUrl + this.htmlFragmentUrl), true);
             request.onreadystatechange = function (ev) {
                 if (request.readyState === 4) {
                     if (request.status === 200) {

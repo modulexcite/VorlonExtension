@@ -1,4 +1,10 @@
 ﻿"use strict"
+window.browser = (function(){
+  return  window.browser      ||
+          window.chrome       ||
+          window.msBrowser;
+})();
+
 module VORLON {
     export class DashboardPlugin extends BasePlugin {
         public htmlFragmentUrl;
@@ -53,7 +59,7 @@ module VORLON {
             }
 
             var request = new XMLHttpRequest();
-            request.open('GET', chrome.extension.getURL(basedUrl + this.htmlFragmentUrl), true);
+            request.open('GET', browser.extension.getURL(basedUrl + this.htmlFragmentUrl), true);
 
             request.onreadystatechange = (ev: Event) => {
                 if (request.readyState === 4) {

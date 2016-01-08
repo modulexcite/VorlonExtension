@@ -1,4 +1,9 @@
 "use strict";
+window.browser = (function () {
+    return window.browser ||
+        window.chrome ||
+        window.msBrowser;
+})();
 var VBE;
 (function (VBE) {
     var DashboardManager = (function () {
@@ -11,20 +16,20 @@ var VBE;
             DashboardManager.TabList = {};
             DashboardManager.CatalogUrl = "./plugincatalog.json";
             DashboardManager.GetTabs();
-            chrome.tabs.onCreated.addListener(function (tab) {
+            browser.tabs.onCreated.addListener(function (tab) {
                 DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
             });
-            chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+            browser.tabs.onRemoved.addListener(function (tabId, removeInfo) {
                 DashboardManager.removeTab({ 'id': tabId });
             });
-            chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+            browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 var internalTab = DashboardManager.GetInternalTabObject(tab);
                 //internalTab.name = changeInfo.title;
                 DashboardManager.renameTab(internalTab);
             });
-            chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
+            browser.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
                 DashboardManager.removeTab({ 'id': removedTabId });
-                chrome.tabs.get(addedTabId, function (tab) {
+                browser.tabs.get(addedTabId, function (tab) {
                     DashboardManager.addTab(DashboardManager.GetInternalTabObject(tab));
                 });
             });
@@ -37,7 +42,7 @@ var VBE;
         };
         DashboardManager.ListenFake = function (pluginid) {
             var messagesDiv = DashboardManager.divMapper(pluginid);
-            chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+            browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 messagesDiv.innerText += messagesDiv.innerText + (sender.tab ?
                     "from a content script:" + sender.tab.url :
                     "from the extension");
@@ -48,7 +53,7 @@ var VBE;
             DashboardManager.TabList = {};
             //Loading tab list
             var tabs = [];
-            chrome.tabs.query({}, function (tabresult) {
+            browser.tabs.query({}, function (tabresult) {
                 for (var i = 0; i < tabresult.length; i++) {
                     tabs.push(DashboardManager.GetInternalTabObject(tabresult[i]));
                 }
@@ -193,7 +198,7 @@ var VBE;
                     }
                 }
             };
-            xhr.open("GET", chrome.extension.getURL(DashboardManager.CatalogUrl));
+            xhr.open("GET", browser.extension.getURL(DashboardManager.CatalogUrl));
             xhr.send();
         };
         DashboardManager.divMapper = function (pluginId) {
