@@ -1,7 +1,8 @@
 ﻿module VORLON {
-    export class FeatureSupported {
-        public featureName: string;
-        public isSupported: boolean;
-        public type: string;
+    export interface FeatureSupported {
+        featureName: string;
+        isSupported: boolean;
+        supportLevel?: string;
+        type: string;
     }
 }

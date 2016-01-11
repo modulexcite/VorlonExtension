@@ -34,6 +34,9 @@
 .plugin-modernizr .modernizr-features-list .modernizrFeatureUnsupported {
   color: #ed2424;
 }
+.plugin-modernizr  .modernizr-features-list .modernizrFeatureMaybeSupported {
+  color: #FF6A00;
+ }
 .plugin-modernizr #css_feature_filter {
   display: block;
   width: 100%;

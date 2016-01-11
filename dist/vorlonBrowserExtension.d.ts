@@ -310,9 +310,10 @@ declare module VORLON {
 }
 
 declare module VORLON {
-    class FeatureSupported {
+    interface FeatureSupported {
         featureName: string;
         isSupported: boolean;
+        supportLevel?: string;
         type: string;
     }
 }

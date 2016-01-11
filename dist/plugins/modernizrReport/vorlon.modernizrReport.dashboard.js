@@ -61,8 +61,25 @@ var VORLON;
                     var cellSupported = row.insertCell(1);
                     cellSupported.align = "center";
                     if (supportedFeatures[i].isSupported) {
-                        cellSupported.className = "modernizrFeatureSupported";
-                        cellSupported.innerHTML = "✔";
+                        if (supportedFeatures[i].supportLevel) {
+                            switch (supportedFeatures[i].supportLevel) {
+                                case "probably":
+                                case "maybe":
+                                case "true":
+                                    cellSupported.className = "modernizrFeatureSupported";
+                                    cellSupported.innerHTML = "✔";
+                                    break;
+                                case "false":
+                                case "":
+                                    cellSupported.className = "modernizrFeatureUnsupported";
+                                    cellSupported.innerHTML = "×";
+                                    break;
+                            }
+                        }
+                        else {
+                            cellSupported.className = "modernizrFeatureSupported";
+                            cellSupported.innerHTML = "✔";
+                        }
                     }
                     else {
                         cellSupported.className = "modernizrFeatureUnsupported";
