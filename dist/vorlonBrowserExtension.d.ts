@@ -148,11 +148,9 @@ declare module VORLON {
         metadata: VorlonMessageMetadata;
         command?: string;
         data?: any;
-        extensionCommand?: string;
     }
     class ClientMessenger {
         private _targetTabId;
-        private _dashboardTabId;
         onRealtimeMessageReceived: (message: VorlonMessage) => void;
         constructor(side: RuntimeSide, targetTabId?: number);
         sendRealtimeMessage(pluginID: string, objectToSend: any, side: RuntimeSide, messageType?: string, command?: string): void;
@@ -285,6 +283,27 @@ declare module VBE.BestPractices {
 }
 
 declare module VORLON {
+    class SampleClient extends ClientPlugin {
+        constructor();
+        getID(): string;
+        refresh(): void;
+        startClientSide(): void;
+        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    class SampleDashboard extends DashboardPlugin {
+        constructor();
+        getID(): string;
+        private _inputField;
+        private _outputDiv;
+        startDashboardSide(div?: HTMLDivElement): void;
+        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
         constructor();
@@ -315,27 +334,6 @@ declare module VORLON {
         isSupported: boolean;
         supportLevel?: string;
         type: string;
-    }
-}
-
-declare module VORLON {
-    class SampleClient extends ClientPlugin {
-        constructor();
-        getID(): string;
-        refresh(): void;
-        startClientSide(): void;
-        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
-    class SampleDashboard extends DashboardPlugin {
-        constructor();
-        getID(): string;
-        private _inputField;
-        private _outputDiv;
-        startDashboardSide(div?: HTMLDivElement): void;
-        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
 }
 

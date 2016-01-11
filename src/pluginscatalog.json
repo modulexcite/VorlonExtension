@@ -15,7 +15,6 @@
             "rules/performances.minification.js",
             "rules/webstandards.activex.js",
             "rules/webstandards.browserdetection.js",
-            "rules/webstandards.browserinterop.js",
             "rules/webstandards.conditionalcomments.js",
             "rules/webstandards.cssfallback.js",
             "rules/webstandards.cssprefixes.js",

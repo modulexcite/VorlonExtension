@@ -48,18 +48,19 @@ module VORLON {
             // Connect messenger to dispatcher
             Core.Messenger.onRealtimeMessageReceived = Core._Dispatch;
 
+            Core.Messenger.sendRealtimeMessage("ALL_PLUGINS", {}, RuntimeSide.Dashboard, "refresh");
+            
             // Launch plugins
-            for (var index = 0; index < Core._dashboardPlugins.length; index++) {
-                var plugin = Core._dashboardPlugins[index];
+            for (var index = 0; index < VORLON.Core._dashboardPlugins.length; index++) {
+                var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
-                Core.Messenger.sendRealtimeMessage(plugin.getID(), {}, RuntimeSide.Dashboard, "refresh");    
             }
         }
         
         private _Dispatch(message: VorlonMessage): void {
             if (!message.metadata) {
                 console.error('invalid message ' + JSON.stringify(message));
-                return;
+                return; 
             }
 
             if (message.metadata.pluginID == 'ALL_PLUGINS') {
@@ -88,9 +89,9 @@ module VORLON {
 
         private _DispatchPluginMessage(plugin: BasePlugin, message: VorlonMessage): void {
             if (message.metadata.side === RuntimeSide.Client) {
-                Core._DispatchFromClientPluginMessage(<DashboardPlugin>plugin, message);
+               Core._DispatchFromClientPluginMessage(<DashboardPlugin>plugin, message);              
             } else {
-                if(message.metadata.messageType === "refresh"){
+                if (message.metadata.messageType === "refresh"){
                     (<ClientPlugin>plugin).refresh();
                 }
                 else {
