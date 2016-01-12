@@ -36,20 +36,20 @@ gulp.task('typescript-compile', function() {
 
 gulp.task("runtime", ['typescript-compile'], function () {
     var pluginsFiles = [
-        "dist/vorlonCore/vorlon.tools.js",
-        "dist/vorlonCore/vorlon.enums.js",
-        "dist/vorlonCore/vorlon.clientMessenger.js",
-        "dist/vorlonCore/vorlon.core.js",
-        "dist/vorlonCore/vorlon.basePlugin.js",
-        "dist/vorlonCore/vorlon.clientPlugin.js"
+        config.build.outputDirectory + "/vorlonCore/vorlon.tools.js",
+        config.build.outputDirectory + "/vorlonCore/vorlon.enums.js",
+        config.build.outputDirectory + "/vorlonCore/vorlon.clientMessenger.js",
+        config.build.outputDirectory + "/vorlonCore/vorlon.core.js",
+        config.build.outputDirectory + "/vorlonCore/vorlon.basePlugin.js",
+        config.build.outputDirectory + "/vorlonCore/vorlon.clientPlugin.js"
     ];
     
     for (var index = 0; index < catalog.plugins.length; index++) {
-        var pluginFile = "dist/plugins/" + catalog.plugins[index].foldername + "/vorlon." + catalog.plugins[index].foldername + ".client.js";
+        var pluginFile = config.build.outputDirectory + "/plugins/" + catalog.plugins[index].foldername + "/vorlon." + catalog.plugins[index].foldername + ".client.js";
         
         if (catalog.plugins[index].dependencies) {
             for (var dependenciesIndex = 0; dependenciesIndex < catalog.plugins[index].dependencies.length; dependenciesIndex++) {
-                pluginsFiles.push("dist/plugins/" + catalog.plugins[index].foldername + "/" + catalog.plugins[index].dependencies[dependenciesIndex]);
+                pluginsFiles.push(config.build.outputDirectory + "/plugins/" + catalog.plugins[index].foldername + "/" + catalog.plugins[index].dependencies[dependenciesIndex]);
             }
         }
         
@@ -64,9 +64,9 @@ gulp.task("runtime", ['typescript-compile'], function () {
 });
 
 gulp.task("firefox", ['runtime'], function () {
-     gulp.src('dist/**/*.*')
+     gulp.src(config.build.outputDirectory + '/**/*.*')
      .pipe(zip(config.build.firefoxFilename))
-     .pipe(gulp.dest(config.build.outputDirectory));
+     .pipe(gulp.dest(config.build.outputDirectoryForFirefox));
 });
 
 gulp.task("default", ['firefox'], function () {
@@ -75,8 +75,8 @@ gulp.task("default", ['firefox'], function () {
 });
 
 /**
- * Watch task, will call the default task if a ts file is updated.
+ * Watch task, will call the default task if an important file is updated.
  */
 gulp.task('watch', function() {
-  gulp.watch(config.core.typescript, ['default']);
+  gulp.watch(config.core.watch, ['default']);
 });

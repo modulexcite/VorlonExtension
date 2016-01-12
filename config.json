@@ -2,7 +2,8 @@
   "build": {
     "declarationFilename": "vorlonExtension.d.ts",
     "runtimeFilename": "vorlonExtension.runtime.js",
-    "outputDirectory": "dist",
+    "outputDirectory": "dist/vorlonExtension",
+    "outputDirectoryForFirefox": "dist",
     "firefoxFilename": "vorlonExtension.xpi"
   },
   "core": {
@@ -22,6 +23,12 @@
     ],
     "typescript": [
       "src/**/*.ts"
+    ],
+    "watch": [
+      "src/**/*.ts",
+      "src/**/*.json",
+      "src/**/*.css",
+      "src/**/*html"
     ]
   }
 }

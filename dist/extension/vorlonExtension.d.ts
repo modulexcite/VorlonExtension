@@ -301,6 +301,40 @@ declare module VORLON {
     }
 }
 
+declare module VORLON {
+    class ModernizrReportClient extends ClientPlugin {
+        supportedFeatures: FeatureSupported[];
+        constructor();
+        startClientSide(): void;
+        loadModernizrFeatures(): void;
+        checkSupportedFeatures(): void;
+        sendFeaturesToDashboard(): void;
+        refresh(): void;
+    }
+}
+
+declare module VORLON {
+    class ModernizrReportDashboard extends DashboardPlugin {
+        constructor();
+        private _filterList;
+        private _cssFeaturesListTable;
+        private _htmlFeaturesListTable;
+        private _miscFeaturesListTable;
+        private _nonCoreFeaturesListTable;
+        startDashboardSide(div?: HTMLDivElement): void;
+        displayClientFeatures(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    interface FeatureSupported {
+        featureName: string;
+        isSupported: boolean;
+        supportLevel?: string;
+        type: string;
+    }
+}
+
 declare var cssjs: any;
 declare module VORLON {
     class WebStandardsClient extends ClientPlugin {
@@ -407,40 +441,6 @@ declare module VORLON {
     }
     interface IScriptRule extends IRule {
         check: (url: string, javascriptContent: string, rulecheck: any, analyzeSummary: any) => void;
-    }
-}
-
-declare module VORLON {
-    class ModernizrReportClient extends ClientPlugin {
-        supportedFeatures: FeatureSupported[];
-        constructor();
-        startClientSide(): void;
-        loadModernizrFeatures(): void;
-        checkSupportedFeatures(): void;
-        sendFeaturesToDashboard(): void;
-        refresh(): void;
-    }
-}
-
-declare module VORLON {
-    class ModernizrReportDashboard extends DashboardPlugin {
-        constructor();
-        private _filterList;
-        private _cssFeaturesListTable;
-        private _htmlFeaturesListTable;
-        private _miscFeaturesListTable;
-        private _nonCoreFeaturesListTable;
-        startDashboardSide(div?: HTMLDivElement): void;
-        displayClientFeatures(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
-    interface FeatureSupported {
-        featureName: string;
-        isSupported: boolean;
-        supportLevel?: string;
-        type: string;
     }
 }
 
