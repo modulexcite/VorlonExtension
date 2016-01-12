@@ -270,6 +270,16 @@ declare module VORLON {
     }
 }
 
+declare module VBE.BestPractices {
+    class ClientPlugin {
+    }
+}
+
+declare module VBE.BestPractices {
+    class DashboardPlugin {
+    }
+}
+
 declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
@@ -301,16 +311,6 @@ declare module VORLON {
         isSupported: boolean;
         supportLevel?: string;
         type: string;
-    }
-}
-
-declare module VBE.BestPractices {
-    class ClientPlugin {
-    }
-}
-
-declare module VBE.BestPractices {
-    class DashboardPlugin {
     }
 }
 

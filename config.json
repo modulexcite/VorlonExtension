@@ -1,8 +1,9 @@
 {
   "build": {
-    "declarationFilename": "vorlonBrowserExtension.d.ts",
-    "runtimeFilename": "vorlonBrowserExtension.runtime.js",
-    "outputDirectory": "dist"
+    "declarationFilename": "vorlonExtension.d.ts",
+    "runtimeFilename": "vorlonExtension.runtime.js",
+    "outputDirectory": "dist",
+    "firefoxFilename": "vorlonExtension.xpi"
   },
   "core": {
     "files": [

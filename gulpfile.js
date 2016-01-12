@@ -9,6 +9,7 @@ var cleants = require('gulp-clean-ts-extends');
 var changed = require('gulp-changed');
 var runSequence = require('run-sequence');
 var replace = require("gulp-replace");
+var zip = require('gulp-zip');
 
 var config = require("./config.json");
 var catalog = require("./src/pluginscatalog.json");
@@ -62,9 +63,15 @@ gulp.task("runtime", ['typescript-compile'], function () {
     .pipe(gulp.dest(config.build.outputDirectory));
 });
 
-gulp.task("default", ['runtime'], function () {
-        gulp.src(config.core.files)
-        .pipe(gulp.dest(config.build.outputDirectory));
+gulp.task("firefox", ['runtime'], function () {
+     gulp.src('dist/**/*.*')
+     .pipe(zip(config.build.firefoxFilename))
+     .pipe(gulp.dest(config.build.outputDirectory));
+});
+
+gulp.task("default", ['firefox'], function () {
+     gulp.src(config.core.files)
+     .pipe(gulp.dest(config.build.outputDirectory));
 });
 
 /**
