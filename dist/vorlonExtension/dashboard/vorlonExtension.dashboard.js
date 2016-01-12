@@ -181,7 +181,6 @@ var VORLON;
                             };
                             document.body.appendChild(pluginscript);
                         }
-                        DashboardManager.UpdateTabInfo();
                     }
                 }
             };
