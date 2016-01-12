@@ -55,8 +55,8 @@ gulp.task("runtime", ['typescript-compile'], function () {
         
         pluginsFiles.push(pluginFile);
     } 
-    
-    pluginsFiles.push("dist/vorlonCore/vorlon.core.client.js");
+     
+    pluginsFiles.push(config.build.outputDirectory + "/vorlonCore/vorlon.core.client.js");
     
     gulp.src(pluginsFiles)
     .pipe(concat(config.build.runtimeFilename))        

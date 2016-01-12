@@ -1,9 +1,6 @@
 {
     "plugins": [
         { "id": "SAMPLE", "name": "Sample", "foldername": "sample" },
-        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport", "dependencies":[
-            "modernizr.js"
-        ] },
         { "id": "WEBSTANDARDS", "name": "Web standards", "foldername": "webstandards", "dependencies":[
             "axe.min.js",
             "css.js",
@@ -16,7 +13,7 @@
             "rules/webstandards.activex.js",
             "rules/webstandards.browserdetection.js",
             "rules/webstandards.conditionalcomments.js",
-            "rules/webstandards.cssfallback.js",
+            "rules/webstandards.cssfallback.js", 
             "rules/webstandards.cssprefixes.js",
             "rules/webstandards.documentmode.js",
             "rules/webstandards.jslibversions.js"
