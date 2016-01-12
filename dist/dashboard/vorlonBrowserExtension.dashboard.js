@@ -228,7 +228,7 @@ var VORLON;
         DashboardManager.renameTab = function (tab) {
             var tabInList = document.getElementById(tab.id);
             if (tabInList) {
-                tabInList.firstChild.innerText = " " + (tab.name) + " - " + tab.id;
+                tabInList.firstChild.innerText = " " + (tab.name);
             }
         };
         DashboardManager.removeInTabList = function (tab) {

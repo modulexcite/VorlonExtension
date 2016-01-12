@@ -31,18 +31,6 @@ module VORLON {
                 Core.Messenger.sendRealtimeMessage(this.getID(), data, RuntimeSide.Dashboard, "message", command);
             }
         }
-
-        public sendCommandToPluginClient(pluginId: string, command: string, data: any = null) {
-            if (Core.Messenger) {
-                Core.Messenger.sendRealtimeMessage(pluginId, data, RuntimeSide.Dashboard, "protocol", command);
-            }
-        }              
-        
-        public sendCommandToPluginDashboard(pluginId : string, command: string, data: any = null) {
-            if (Core.Messenger) {
-                Core.Messenger.sendRealtimeMessage(pluginId, data, RuntimeSide.Client, "protocol", command);
-            }
-        }
         
         public trace(message:string):void {
             console.log(message);

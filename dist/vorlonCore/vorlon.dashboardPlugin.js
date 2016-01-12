@@ -30,18 +30,6 @@ var VORLON;
                 VORLON.Core.Messenger.sendRealtimeMessage(this.getID(), data, VORLON.RuntimeSide.Dashboard, "message", command);
             }
         };
-        DashboardPlugin.prototype.sendCommandToPluginClient = function (pluginId, command, data) {
-            if (data === void 0) { data = null; }
-            if (VORLON.Core.Messenger) {
-                VORLON.Core.Messenger.sendRealtimeMessage(pluginId, data, VORLON.RuntimeSide.Dashboard, "protocol", command);
-            }
-        };
-        DashboardPlugin.prototype.sendCommandToPluginDashboard = function (pluginId, command, data) {
-            if (data === void 0) { data = null; }
-            if (VORLON.Core.Messenger) {
-                VORLON.Core.Messenger.sendRealtimeMessage(pluginId, data, VORLON.RuntimeSide.Client, "protocol", command);
-            }
-        };
         DashboardPlugin.prototype.trace = function (message) {
             console.log(message);
         };

@@ -47,14 +47,14 @@ module VORLON {
 
             // Connect messenger to dispatcher
             Core.Messenger.onRealtimeMessageReceived = Core._Dispatch;
-
-            Core.Messenger.sendRealtimeMessage("ALL_PLUGINS", {}, RuntimeSide.Dashboard, "refresh");
-            
+           
             // Launch plugins
             for (var index = 0; index < VORLON.Core._dashboardPlugins.length; index++) {
                 var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
             }
+
+            Core.Messenger.sendRealtimeMessage("ALL_PLUGINS", {}, RuntimeSide.Dashboard, "refresh");
         }
         
         private _Dispatch(message: VorlonMessage): void {

@@ -49,12 +49,12 @@ var VORLON;
             VORLON.Core._messenger = new VORLON.ClientMessenger(VORLON.Core._side, tabid);
             // Connect messenger to dispatcher
             VORLON.Core.Messenger.onRealtimeMessageReceived = VORLON.Core._Dispatch;
-            VORLON.Core.Messenger.sendRealtimeMessage("ALL_PLUGINS", {}, VORLON.RuntimeSide.Dashboard, "refresh");
             // Launch plugins
             for (var index = 0; index < VORLON.Core._dashboardPlugins.length; index++) {
                 var plugin = VORLON.Core._dashboardPlugins[index];
                 plugin.startDashboardSide(divMapper ? divMapper(plugin.getID()) : null);
             }
+            VORLON.Core.Messenger.sendRealtimeMessage("ALL_PLUGINS", {}, VORLON.RuntimeSide.Dashboard, "refresh");
         };
         _Core.prototype._Dispatch = function (message) {
             if (!message.metadata) {

@@ -279,7 +279,7 @@ module VORLON {
             let tabInList = <HTMLLIElement> document.getElementById(tab.id);
             
             if(tabInList){
-                (<HTMLLIElement>tabInList.firstChild).innerText = " " + (tab.name) + " - " + tab.id;
+                (<HTMLLIElement>tabInList.firstChild).innerText = " " + (tab.name);
             }
         }
         
