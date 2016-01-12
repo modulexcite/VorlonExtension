@@ -125,12 +125,6 @@ var VORLON;
         DashboardManager.TabCount = function () {
             return Object.keys(DashboardManager.TabList).length;
         };
-        DashboardManager.UpdateTabInfo = function () {
-            if (DashboardManager.TabList[DashboardManager.TargetTabid] != null) {
-                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.TargetTabid].displayid;
-            }
-            document.querySelector('[data-hook~=tab-id]').textContent = DashboardManager.ListenTabDisplayid;
-        };
         DashboardManager.loadPlugins = function () {
             var _this = this;
             if (DashboardManager.TargetTabid == null && isNaN(DashboardManager.TargetTabid)) {

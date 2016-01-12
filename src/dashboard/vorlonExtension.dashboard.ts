@@ -12,7 +12,6 @@ module VORLON {
         static CatalogUrl: string;
         static TargetTabid: number;
         static DisplayingTab: boolean;
-        static ListenTabDisplayid: string;
         static TabList: any;
         static PluginsLoaded: boolean;
         
@@ -154,14 +153,6 @@ module VORLON {
         
         static TabCount(): number{
             return Object.keys(DashboardManager.TabList).length;
-        }
-
-        static UpdateTabInfo(): void {
-            if(DashboardManager.TabList[DashboardManager.TargetTabid] != null){
-                DashboardManager.ListenTabDisplayid = DashboardManager.TabList[DashboardManager.TargetTabid].displayid;
-            }
-            
-            document.querySelector('[data-hook~=tab-id]').textContent = DashboardManager.ListenTabDisplayid;
         }
 
         public static loadPlugins(): void {
