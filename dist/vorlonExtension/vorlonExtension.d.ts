@@ -279,27 +279,6 @@ declare module VBE.BestPractices {
 }
 
 declare module VORLON {
-    class SampleClient extends ClientPlugin {
-        constructor();
-        getID(): string;
-        refresh(): void;
-        startClientSide(): void;
-        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
-    class SampleDashboard extends DashboardPlugin {
-        constructor();
-        getID(): string;
-        private _inputField;
-        private _outputDiv;
-        startDashboardSide(div?: HTMLDivElement): void;
-        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
-    }
-}
-
-declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
         constructor();
@@ -330,6 +309,27 @@ declare module VORLON {
         isSupported: boolean;
         supportLevel?: string;
         type: string;
+    }
+}
+
+declare module VORLON {
+    class SampleClient extends ClientPlugin {
+        constructor();
+        getID(): string;
+        refresh(): void;
+        startClientSide(): void;
+        onRealtimeMessageReceivedFromDashboardSide(receivedObject: any): void;
+    }
+}
+
+declare module VORLON {
+    class SampleDashboard extends DashboardPlugin {
+        constructor();
+        getID(): string;
+        private _inputField;
+        private _outputDiv;
+        startDashboardSide(div?: HTMLDivElement): void;
+        onRealtimeMessageReceivedFromClientSide(receivedObject: any): void;
     }
 }
 

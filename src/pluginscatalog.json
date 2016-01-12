@@ -1,6 +1,9 @@
 {
     "plugins": [
         { "id": "SAMPLE", "name": "Sample", "foldername": "sample" },
+        { "id": "MODERNIZR", "name": "Modernizr", "foldername": "modernizrReport", "dependencies":[
+            "modernizr.js"
+        ]},
         { "id": "WEBSTANDARDS", "name": "Web standards", "foldername": "webstandards", "dependencies":[
             "axe.min.js",
             "css.js",
@@ -17,6 +20,6 @@
             "rules/webstandards.cssprefixes.js",
             "rules/webstandards.documentmode.js",
             "rules/webstandards.jslibversions.js"
-        ] }
+        ]}
     ]
 }
