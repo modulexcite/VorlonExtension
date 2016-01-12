@@ -43,7 +43,6 @@ declare module VORLON {
         static CatalogUrl: string;
         static TargetTabid: number;
         static DisplayingTab: boolean;
-        static ListenTabDisplayid: string;
         static TabList: any;
         static PluginsLoaded: boolean;
         constructor(tabId: any);
@@ -51,7 +50,6 @@ declare module VORLON {
         static GetTabs(): void;
         static AddTabToList(tab: any): void;
         static TabCount(): number;
-        static UpdateTabInfo(): void;
         static loadPlugins(): void;
         static hideWaitingLogo(): void;
         static showWaitingLogo(): void;
