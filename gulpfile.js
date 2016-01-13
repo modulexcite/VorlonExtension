@@ -34,7 +34,12 @@ gulp.task('typescript-compile', function() {
     ]);
 });
 
-gulp.task("runtime", ['typescript-compile'], function () {
+gulp.task("copySource", ['typescript-compile'], function () {
+     return gulp.src(config.core.files)
+     .pipe(gulp.dest(config.build.outputDirectory));
+});
+
+gulp.task("runtime", ['copySource'], function () {
     var pluginsFiles = [
         config.build.outputDirectory + "/vorlonCore/vorlon.tools.js",
         config.build.outputDirectory + "/vorlonCore/vorlon.enums.js",
@@ -58,20 +63,19 @@ gulp.task("runtime", ['typescript-compile'], function () {
      
     pluginsFiles.push(config.build.outputDirectory + "/vorlonCore/vorlon.core.client.js");
     
-    gulp.src(pluginsFiles)
+    return gulp.src(pluginsFiles)
     .pipe(concat(config.build.runtimeFilename))        
     .pipe(gulp.dest(config.build.outputDirectory));
 });
 
 gulp.task("firefox", ['runtime'], function () {
-     gulp.src(config.build.outputDirectory + '/**/*.*')
+     return gulp.src(config.build.outputDirectory + '/**/*.*')
      .pipe(zip(config.build.firefoxFilename))
      .pipe(gulp.dest(config.build.outputDirectoryForFirefox));
 });
 
 gulp.task("default", ['firefox'], function () {
-     gulp.src(config.core.files)
-     .pipe(gulp.dest(config.build.outputDirectory));
+     console.log("Process done...");
 });
 
 /**

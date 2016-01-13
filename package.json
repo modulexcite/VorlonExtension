@@ -21,7 +21,7 @@
     "gulp-util": "~3.0.4",
     "gulp-zip": "^3.0.2",
     "merge2": "~0.3.5",
-    "run-sequence": "~1.1.0",
+    "run-sequence": "^1.1.5",
     "through2": "~0.6.5",
     "typescript": "~1.6.2"
   }
