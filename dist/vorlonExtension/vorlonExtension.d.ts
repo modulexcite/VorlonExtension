@@ -268,6 +268,19 @@ declare module VORLON {
     }
 }
 
+<<<<<<< HEAD
+=======
+declare module VBE.BestPractices {
+    class ClientPlugin {
+    }
+}
+
+declare module VBE.BestPractices {
+    class DashboardPlugin {
+    }
+}
+
+>>>>>>> 08434f941f057d59c539f822125820c6e9af3e54
 declare module VORLON {
     class ModernizrReportClient extends ClientPlugin {
         supportedFeatures: FeatureSupported[];
