@@ -202,7 +202,6 @@
                 this.supportedFeatures.push({ featureName: "Web Sockets binaryType", isSupported: Modernizr.websocketsbinary, type: "noncore" });
                 this.supportedFeatures.push({ featureName: "Window Framed", isSupported: Modernizr.framed, type: "noncore" });
                 this.supportedFeatures.push({ featureName: "Shared Web Workers", isSupported: Modernizr.sharedworkers, type: "noncore" });
-                this.sendFeaturesToDashboard();
             }
         }
 

@@ -34,10 +34,5 @@
   ],
   "web_accessible_resources": [
      "*.js"
-  ],
-  "applications": {
-    "gecko": {
-        "id": "extension@vorlonjs.io"
-    }
-  }
+  ]
 }

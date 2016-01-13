@@ -30,12 +30,12 @@ module VORLON {
             });
             
             browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
-                DashboardManager.removeTab({'id': tabId});
                 if(tabId === DashboardManager.TargetTabid){
                     DashboardManager.showWaitingLogo();
                 }
+                DashboardManager.removeTab({'id': tabId});
             });
-            
+             
             browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 var internalTab = DashboardManager.GetInternalTabObject(tab);
                 //internalTab.name = changeInfo.title;

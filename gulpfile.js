@@ -68,10 +68,21 @@ gulp.task("runtime", ['copySource'], function () {
     .pipe(gulp.dest(config.build.outputDirectory));
 });
 
-gulp.task("firefox", ['runtime'], function () {
+gulp.task("copyFilesForfirefox", ['runtime'], function () {
      return gulp.src(config.build.outputDirectory + '/**/*.*')
-     .pipe(zip(config.build.firefoxFilename))
      .pipe(gulp.dest(config.build.outputDirectoryForFirefox));
+});
+
+gulp.task("copyManifestForfirefox", ['copyFilesForfirefox'], function () {
+     return gulp.src('src/firefoxManifest.json')
+     .pipe(concat('manifest.json'))
+     .pipe(gulp.dest(config.build.outputDirectoryForFirefox))
+});
+
+gulp.task("firefox", ['copyManifestForfirefox'], function () {
+     return gulp.src(config.build.outputDirectoryForFirefox + '/**/*.*')
+     .pipe(zip(config.build.firefoxFilename))
+     .pipe(gulp.dest(config.build.distDirectory));
 });
 
 gulp.task("default", ['firefox'], function () {
